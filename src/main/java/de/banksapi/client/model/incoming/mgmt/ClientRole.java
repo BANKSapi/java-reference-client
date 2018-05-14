@@ -1,9 +1,12 @@
 package de.banksapi.client.model.incoming.mgmt;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ClientRole {
 
     private String name; // unique

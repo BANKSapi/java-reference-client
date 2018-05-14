@@ -1,7 +1,10 @@
 package de.banksapi.client.model.incoming.mgmt;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.Collection;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Client {
 
     private String name;
