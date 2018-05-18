@@ -13,6 +13,8 @@ import java.util.Map;
 
 import static de.banksapi.client.services.internal.HttpHelper.buildUrl;
 
+import de.banksapi.client.BANKSapiConfig;
+
 /**
  * This service interfaces with the Banks/Connect Customer API. This API provides all relevant
  * customer information, such as banking accounts, products and turnovers.
@@ -29,8 +31,8 @@ public class CustomerServiceREST extends CustomerServiceBase {
      *
      * @param oAuth2Token a valid OAuth2 token to send along requests
      */
-    CustomerServiceREST(OAuth2Token oAuth2Token) {
-        super(oAuth2Token);
+    CustomerServiceREST(BANKSapiConfig banksApiConfig, OAuth2Token oAuth2Token) {
+        super(banksApiConfig, oAuth2Token);
     }
 
     /**
@@ -42,21 +44,21 @@ public class CustomerServiceREST extends CustomerServiceBase {
      * @param oAuth2Token a valid OAuth2 token to send along requests
      * @param cryptoService Crypto service to use for credentials encryption
      */
-    CustomerServiceREST(OAuth2Token oAuth2Token, CryptoService cryptoService) {
-        super(oAuth2Token, cryptoService);
+    CustomerServiceREST(BANKSapiConfig banksApiConfig, OAuth2Token oAuth2Token, CryptoService cryptoService) {
+        super(banksApiConfig, oAuth2Token, cryptoService);
     }
 
     public Response<Customer> getCustomer() {
-        return createAuthenticatingHttpClient(CUSTOMER_CONTEXT).get(Customer.class);
+        return createAuthenticatingHttpClient(getCustomerContext()).get(Customer.class);
     }
 
     public Response<BankzugangMap> getBankzugaenge() {
-        URL bankzugaengeUrl = buildUrl(CUSTOMER_CONTEXT, PATH_FMT_BANKZUGAENGE);
+        URL bankzugaengeUrl = buildUrl(getCustomerContext(), PATH_FMT_BANKZUGAENGE);
         return createAuthenticatingHttpClient(bankzugaengeUrl).get(BankzugangMap.class);
     }
 
     public Response<String> addBankzugaenge(LoginCredentialsMap loginCredentialsMap) {
-        URL bankzugaengeUrl = buildUrl(CUSTOMER_CONTEXT, PATH_FMT_BANKZUGAENGE);
+        URL bankzugaengeUrl = buildUrl(getCustomerContext(), PATH_FMT_BANKZUGAENGE);
 
         LoginCredentialsMap loginCredentialsMapToUse = loginCredentialsMap;
         if (cryptoService != null) {
@@ -68,32 +70,32 @@ public class CustomerServiceREST extends CustomerServiceBase {
     }
 
     public Response<String> deleteBankzugaenge() {
-        URL bankzugaengeUrl = buildUrl(CUSTOMER_CONTEXT, PATH_FMT_BANKZUGAENGE);
+        URL bankzugaengeUrl = buildUrl(getCustomerContext(), PATH_FMT_BANKZUGAENGE);
         return createAuthenticatingHttpClient(bankzugaengeUrl).delete();
     }
 
     public Response<String> deleteBankzugang(String accountId) {
-        URL bankzugangUrl = buildUrl(CUSTOMER_CONTEXT, PATH_FMT_BANKZUGANG, accountId);
+        URL bankzugangUrl = buildUrl(getCustomerContext(), PATH_FMT_BANKZUGANG, accountId);
         return createAuthenticatingHttpClient(bankzugangUrl).delete();
     }
 
     public Response<Bankzugang> getBankzugang(String accountId) {
-        URL bankzugaengeUrl = buildUrl(CUSTOMER_CONTEXT, PATH_FMT_BANKZUGANG, accountId);
+        URL bankzugaengeUrl = buildUrl(getCustomerContext(), PATH_FMT_BANKZUGANG, accountId);
         return createAuthenticatingHttpClient(bankzugaengeUrl).get(Bankzugang.class);
     }
 
     public Response<Bankprodukt> getBankprodukt(String accountId, String productId) {
-        URL bankzugaengeUrl = buildUrl(CUSTOMER_CONTEXT, PATH_FMT_PRODUKT, accountId, productId);
+        URL bankzugaengeUrl = buildUrl(getCustomerContext(), PATH_FMT_PRODUKT, accountId, productId);
         return createAuthenticatingHttpClient(bankzugaengeUrl).get(Bankprodukt.class);
     }
 
     public Response<KontoumsatzList> getKontoumsaetze(String accountId, String productId) {
-        URL kontoumsaetzeUrl = buildUrl(CUSTOMER_CONTEXT, PATH_FMT_KONTOUMSAETZE, accountId, productId);
+        URL kontoumsaetzeUrl = buildUrl(getCustomerContext(), PATH_FMT_KONTOUMSAETZE, accountId, productId);
         return createAuthenticatingHttpClient(kontoumsaetzeUrl).get(KontoumsatzList.class);
     }
 
     public Response<DepotpositionList> getDepotpositionen(String accountId, String productId) {
-        URL depotpositionenUrl = buildUrl(CUSTOMER_CONTEXT, PATH_FMT_DEPOTPOSITIONEN, accountId, productId);
+        URL depotpositionenUrl = buildUrl(getCustomerContext(), PATH_FMT_DEPOTPOSITIONEN, accountId, productId);
         return createAuthenticatingHttpClient(depotpositionenUrl).get(DepotpositionList.class);
     }
 
@@ -104,14 +106,14 @@ public class CustomerServiceREST extends CustomerServiceBase {
                     encryptCredentials(ueberweisung.getCredentials()));
         }
 
-        URL ueberweisungUrl = buildUrl(CUSTOMER_CONTEXT, PATH_FMT_UEBERWEISUNG, providerId, productId);
+        URL ueberweisungUrl = buildUrl(getCustomerContext(), PATH_FMT_UEBERWEISUNG, providerId, productId);
         return createAuthenticatingHttpClient(ueberweisungUrl)
                 .post(ueberweisung, UeberweisungErgebnis.class);
     }
 
     public Response<UeberweisungErgebnis> submitTextTan(String providerId, String productId,
             String tan) {
-        URL submitTanUrl = buildUrl(CUSTOMER_CONTEXT, PATH_FMT_SUBMIT_TAN, providerId, productId, tan);
+        URL submitTanUrl = buildUrl(getCustomerContext(), PATH_FMT_SUBMIT_TAN, providerId, productId, tan);
 
         Map<String, String> submitTanBody = new HashMap<>();
         submitTanBody.put("tan", tan);

@@ -20,7 +20,7 @@ import static de.banksapi.client.TestCredentials.ACCOUNT_ID;
 import static junit.framework.TestCase.fail;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class CustomerServiceTest implements BanksapiTest {
+public class CustomerServiceTest extends BanksapiTest {
 
     private static CustomerServiceHATEOAS customerService;
 
@@ -38,7 +38,7 @@ public class CustomerServiceTest implements BanksapiTest {
                 USERNAME, PASSWORD);
         URL keystore = CryptoServiceTest.class.getResource("/keystore.jks");
         CryptoService cryptoService = CryptoService.fromKeystore(keystore.getPath(), "demo");
-        customerService = new CustomerServiceHATEOAS(token, cryptoService);
+        customerService = new CustomerServiceHATEOAS(defaultTestConfig(), token, cryptoService);
     }
 
     @Test

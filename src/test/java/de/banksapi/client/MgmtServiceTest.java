@@ -17,7 +17,7 @@ import static de.banksapi.client.TestAuthData.ADMIN_CLIENT_PASSWORD;
 import static de.banksapi.client.TestAuthData.ADMIN_CLIENT_USERNAME;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MgmtServiceTest implements BanksapiTest {
+public class MgmtServiceTest extends BanksapiTest {
 
     private static MgmtService mgmtService;
     private static Tenant tenant;
