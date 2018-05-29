@@ -13,9 +13,10 @@ import java.util.stream.Collectors;
 
 import static de.banksapi.client.BANKSapi.getBanksapiBase;
 
+import de.banksapi.client.BANKSapiConfig;
+
 class CustomerServiceBase implements OAuthAwareService {
 
-    final static URL CUSTOMER_CONTEXT = HttpHelper.buildUrl(getBanksapiBase(), "customer/v2/");
 
     final static String PATH_FMT_BANKZUGAENGE = "bankzugaenge";
     final static String PATH_FMT_BANKZUGANG = "bankzugaenge/%s";
@@ -28,24 +29,32 @@ class CustomerServiceBase implements OAuthAwareService {
     private OAuth2Token oAuth2Token;
 
     CryptoService cryptoService;
+    
+    private URL customerContext;
 
-    CustomerServiceBase(OAuth2Token oAuth2Token) {
+    CustomerServiceBase(BANKSapiConfig banksApiConfig, OAuth2Token oAuth2Token) {
+        Objects.requireNonNull(banksApiConfig);
         Objects.requireNonNull(oAuth2Token);
         this.oAuth2Token = oAuth2Token;
+        this.customerContext = HttpHelper.buildUrl(getBanksapiBase(), "customer/v2/");
     }
 
-    CustomerServiceBase(OAuth2Token oAuth2Token,
+    CustomerServiceBase(BANKSapiConfig banksApiConfig, OAuth2Token oAuth2Token,
             CryptoService cryptoService) {
-        this(oAuth2Token);
+        this(banksApiConfig, oAuth2Token);
         Objects.requireNonNull(cryptoService);
         this.cryptoService = cryptoService;
     }
 
+    public URL getCustomerContext() {
+        return customerContext;
+    }
+    
     @Override
     public OAuth2Token getOAuth2Token() {
         return oAuth2Token;
     }
-
+    
     LoginCredentialsMap encryptLoginCredentialsMap(LoginCredentialsMap loginCredentialsMap) {
         LoginCredentialsMap encryptedLCM = new LoginCredentialsMap();
 

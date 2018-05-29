@@ -1,24 +1,28 @@
 package de.banksapi.client;
 
 import de.banksapi.client.services.internal.HttpClient;
-
+import java.net.URL;
 import java.util.UUID;
 
-public interface BanksapiTest {
+public abstract class BanksapiTest {
+    
+    static BANKSapiConfig defaultTestConfig() {
+        return new BANKSapiConfig(BANKSapi.getBanksapiBase());
+    }
 
-    default void basicResponseCheck(HttpClient.Response response, int expectedHttpCode) {
+    void basicResponseCheck(HttpClient.Response response, int expectedHttpCode) {
         assert response.getError() == null : "An error occurred: " + response.getError();
         int actualHttpCode = response.getHttpCode();
         assert actualHttpCode == expectedHttpCode : "HTTP code " + actualHttpCode + " (actual) " +
                 "!= " + expectedHttpCode + " (expected)";
     }
 
-    default void basicResponseCheckData(HttpClient.Response response, int expectedHttpCode, String subject) {
+    void basicResponseCheckData(HttpClient.Response response, int expectedHttpCode, String subject) {
         basicResponseCheck(response, expectedHttpCode);
         assert response.getData() != null : "Unable to perform '" + subject + "' request";
     }
 
-    default String generateRandomString() {
+    String generateRandomString() {
         return UUID.randomUUID().toString();
     }
 

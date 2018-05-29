@@ -13,6 +13,8 @@ import java.util.Map;
 
 import static de.banksapi.client.services.internal.HttpHelper.buildUrl;
 
+import de.banksapi.client.BANKSapiConfig;
+
 /**
  * This service interfaces with the Banks/Connect Customer API. This API provides all relevant
  * customer information, such as banking accounts, products and turnovers.
@@ -28,9 +30,10 @@ public class CustomerServiceHATEOAS extends CustomerServiceBase {
      * {@link #addBankzugaenge(Customer, LoginCredentialsMap)} must be encrypted</p>
      *
      * @param oAuth2Token a valid OAuth2 token to send along requests
+     * @param cryptoService 
      */
-    public CustomerServiceHATEOAS(OAuth2Token oAuth2Token) {
-        super(oAuth2Token);
+    public CustomerServiceHATEOAS(BANKSapiConfig banksApiConfig, OAuth2Token oAuth2Token) {
+        super(banksApiConfig, oAuth2Token);
     }
 
     /**
@@ -42,12 +45,12 @@ public class CustomerServiceHATEOAS extends CustomerServiceBase {
      * @param oAuth2Token a valid OAuth2 token to send along requests
      * @param cryptoService Crypto service to use for credentials encryption
      */
-    public CustomerServiceHATEOAS(OAuth2Token oAuth2Token, CryptoService cryptoService) {
-        super(oAuth2Token, cryptoService);
+    public CustomerServiceHATEOAS(BANKSapiConfig banksApiConfig, OAuth2Token oAuth2Token, CryptoService cryptoService) {
+        super(banksApiConfig, oAuth2Token, cryptoService);
     }
 
     public Response<Customer> getCustomer() {
-        return createAuthenticatingHttpClient(CUSTOMER_CONTEXT).get(Customer.class);
+        return createAuthenticatingHttpClient(getCustomerContext()).get(Customer.class);
     }
 
     public Response<BankzugangMap> getBankzugaenge(Customer customer) {
@@ -76,12 +79,12 @@ public class CustomerServiceHATEOAS extends CustomerServiceBase {
     }
 
     public Response<Bankzugang> getBankzugang(String accountId) {
-        URL bankzugaengeUrl = buildUrl(CUSTOMER_CONTEXT, PATH_FMT_BANKZUGANG, accountId);
+        URL bankzugaengeUrl = buildUrl(getCustomerContext(), PATH_FMT_BANKZUGANG, accountId);
         return createAuthenticatingHttpClient(bankzugaengeUrl).get(Bankzugang.class);
     }
 
     public Response<Bankprodukt> getBankprodukt(String accountId, String productId) {
-        URL bankzugaengeUrl = buildUrl(CUSTOMER_CONTEXT, PATH_FMT_PRODUKT, accountId, productId);
+        URL bankzugaengeUrl = buildUrl(getCustomerContext(), PATH_FMT_PRODUKT, accountId, productId);
         return createAuthenticatingHttpClient(bankzugaengeUrl).get(Bankprodukt.class);
     }
 
