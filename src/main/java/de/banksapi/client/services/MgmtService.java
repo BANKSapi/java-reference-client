@@ -22,7 +22,7 @@ import static de.banksapi.client.services.internal.HttpHelper.buildUrl;
  */
 public class MgmtService implements OAuthAwareService {
 
-    private final static URL AUTH_CONTEXT = HttpHelper.buildUrl(getBanksapiBase(), "service/");
+    private final static URL AUTH_CONTEXT = HttpHelper.buildUrl(getBanksapiBase(), "auth/");
 
     private static final String PATH_FMT_TENANTS = "mgmt/v1/tenants";
     private static final String PATH_FMT_TENANT = "mgmt/v1/tenants/%s";
