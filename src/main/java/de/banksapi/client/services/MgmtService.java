@@ -22,7 +22,7 @@ import static de.banksapi.client.services.internal.HttpHelper.buildUrl;
  */
 public class MgmtService implements OAuthAwareService {
 
-    private final static URL AUTH_CONTEXT = HttpHelper.buildUrl(getBanksapiBase(), "auth/");
+    private final static URL AUTH_CONTEXT = HttpHelper.buildUrl(getBanksapiBase(), "service/");
 
     private static final String PATH_FMT_TENANTS = "mgmt/v1/tenants";
     private static final String PATH_FMT_TENANT = "mgmt/v1/tenants/%s";
@@ -30,6 +30,8 @@ public class MgmtService implements OAuthAwareService {
     private static final String PATH_FMT_CLIENT = "mgmt/v1/tenants/%s/clients/%s";
     private static final String PATH_FMT_USERS = "mgmt/v1/tenants/%s/users";
     private static final String PATH_FMT_USER = "mgmt/v1/tenants/%s/users/%s";
+    private static final String PATH_FMT_USER_DEACTIVATE = "mgmt/v1/tenants/%s/users/%s/deactivate";
+    private static final String PATH_FMT_USER_REACTIVATE = "mgmt/v1/tenants/%s/users/%s/reactivate";
     private static final String PATH_FMT_ROLES = "mgmt/v1/tenants/%s/clients/%s/roles";
     private static final String PATH_FMT_ROLE = "mgmt/v1/tenants/%s/clients/%s/roles/%s";
     private static final String PATH_FMT_ROLE_USERS = "mgmt/v1/tenants/%s/clients/%s/roles/%s/users";
@@ -108,6 +110,16 @@ public class MgmtService implements OAuthAwareService {
     public Response<String> addUser(String tenantName, UserOut user) {
         URL rolesUrl = buildUrl(AUTH_CONTEXT, PATH_FMT_USERS, tenantName);
         return createAuthenticatingHttpClient(rolesUrl).post(user, String.class);
+    }
+
+    public Response deactivateUser(String tenantName, UUID userId) {
+        URL rolesUrl = buildUrl(AUTH_CONTEXT, PATH_FMT_USER_DEACTIVATE, tenantName, userId.toString());
+        return createAuthenticatingHttpClient(rolesUrl).put(null);
+    }
+
+    public Response<UserIn> reactivateUser(String tenantName, UUID userId, UserOut user) {
+        URL rolesUrl = buildUrl(AUTH_CONTEXT, PATH_FMT_USER_REACTIVATE, tenantName, userId.toString());
+        return createAuthenticatingHttpClient(rolesUrl).post(user, UserIn.class);
     }
 
     @Override

@@ -16,6 +16,7 @@ import static de.banksapi.client.services.internal.HttpHelper.buildUrl;
 /**
  * This service interfaces with the Banks/Connect Customer API. This API provides all relevant
  * customer information, such as banking accounts, products and turnovers.
+ *
  * <p>This service uses the APIs in the HATEOAS style.</p>
  *
  * @see <a href="https://docs.banksapi.de/customer.html">Banks/Connect Customer API</a>
@@ -24,6 +25,7 @@ public class CustomerServiceHATEOAS extends CustomerServiceBase {
 
     /**
      * Creates a new instance of the customer service without encryption capability.
+     *
      * <p>When using this constructor credentials provided to
      * {@link #addBankzugaenge(Customer, LoginCredentialsMap)} must be encrypted</p>
      *
@@ -35,6 +37,7 @@ public class CustomerServiceHATEOAS extends CustomerServiceBase {
 
     /**
      * Creates a new instance of the customer service with encryption capability.
+     *
      * <p>When using this constructor credentials provided to
      * {@link #addBankzugaenge(Customer, LoginCredentialsMap)} will be encrypted on the fly
      * using the provided {@link CryptoService}.</p>
@@ -116,6 +119,5 @@ public class CustomerServiceHATEOAS extends CustomerServiceBase {
         return createAuthenticatingHttpClient(submitTanUrl)
                 .post(submitTanBody, UeberweisungErgebnis.class);
     }
-
 
 }

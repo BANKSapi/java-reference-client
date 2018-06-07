@@ -4,14 +4,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
+import static de.banksapi.client.services.internal.StringUtil.isBlank;
+
 /**
- * This class provides basic HTTP communication functions via {@link HttpURLConnection} and acts
+ * This class provides basic HTTP communication functions via {@link HttpsURLConnection} and acts
  * as a facade to ease the integration of a different HTTP client such as OkHttp, Apache CXF, Apache
  * HttpComponents and so on.
  * <p>This client is stateful and you should use one {@link HttpClient} instance per request.</p>
@@ -20,14 +22,14 @@ public class HttpClient {
 
     private URL url;
 
-    private HttpURLConnection httpURLConnection;
+    private HttpsURLConnection httpsURLConnection;
 
     private ObjectMapper objectMapper;
 
     public HttpClient(URL url, PropertyNamingStrategy propertyNamingStrategy) {
         try {
             this.url = url;
-            httpURLConnection = (HttpURLConnection) this.url.openConnection();
+            httpsURLConnection = (HttpsURLConnection) this.url.openConnection();
             objectMapper = new ObjectMapper().setPropertyNamingStrategy(
                     propertyNamingStrategy.toJacksonStrategy());
         } catch (MalformedURLException e) {
@@ -38,15 +40,15 @@ public class HttpClient {
     }
 
     public HttpClient setHeader(String key, String value) {
-        httpURLConnection.setRequestProperty(key, value);
+        httpsURLConnection.setRequestProperty(key, value);
         return this;
     }
 
     public <T> Response<T> post(String postData, Class<T> responseClass) {
         try {
-            httpURLConnection.setRequestMethod("POST");
-            httpURLConnection.setDoOutput(true);
-            try (DataOutputStream out = new DataOutputStream(httpURLConnection.getOutputStream())) {
+            httpsURLConnection.setRequestMethod("POST");
+            httpsURLConnection.setDoOutput(true);
+            try (DataOutputStream out = new DataOutputStream(httpsURLConnection.getOutputStream())) {
                 out.write(postData.getBytes());
             }
         } catch (IOException e) {
@@ -64,10 +66,54 @@ public class HttpClient {
         }
     }
 
+    public <T> Response<T> post(Class<T> responseClass) {
+        try {
+            httpsURLConnection.setRequestMethod("POST");
+            httpsURLConnection.setDoOutput(true);
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to setup POST request to '" + url + "'", e);
+        }
+
+        return performRequest(responseClass);
+    }
+
+    public <T> Response<T> put(String putData, Class<T> responseClass) {
+        try {
+            httpsURLConnection.setRequestMethod("PUT");
+            httpsURLConnection.setDoOutput(true);
+            try (DataOutputStream out = new DataOutputStream(httpsURLConnection.getOutputStream())) {
+                out.write(putData.getBytes());
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to setup POST request to '" + url + "'", e);
+        }
+
+        return performRequest(responseClass);
+    }
+
+    public <U, T> Response<T> put(U putData, Class<T> responseClass) {
+        try {
+            return put(objectMapper.writeValueAsString(putData), responseClass);
+        } catch (JsonProcessingException e) {
+            throw new JsonSerializationException("Unable to serialize object to JSON", e);
+        }
+    }
+
+    public <T> Response<T> put(Class<T> responseClass) {
+        try {
+            httpsURLConnection.setRequestMethod("PUT");
+            httpsURLConnection.setDoOutput(true);
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to setup PUT request to '" + url + "'", e);
+        }
+
+        return performRequest(responseClass);
+    }
+
     public Response<String> delete() {
         try {
-            httpURLConnection.setRequestMethod("DELETE");
-            httpURLConnection.setDoOutput(true);
+            httpsURLConnection.setRequestMethod("DELETE");
+            httpsURLConnection.setDoOutput(true);
         } catch (ProtocolException e) {
             throw new IllegalStateException("Unable to setup DELETE request to '" + url + "'", e);
         }
@@ -77,8 +123,8 @@ public class HttpClient {
 
     public <T> Response<T> get(Class<T> responseClass) {
         try {
-            httpURLConnection.setRequestMethod("GET");
-            httpURLConnection.setDoOutput(true);
+            httpsURLConnection.setRequestMethod("GET");
+            httpsURLConnection.setDoOutput(true);
         } catch (ProtocolException e) {
             throw new IllegalStateException("Unable to setup GET request to '" + url + "'", e);
         }
@@ -90,18 +136,24 @@ public class HttpClient {
         Response<T> response = new Response<>();
 
         try {
-            response.httpCode = httpURLConnection.getResponseCode();
-            InputStream inputStream = httpURLConnection.getInputStream();
+            response.httpCode = httpsURLConnection.getResponseCode();
+
+            InputStream inputStream = httpsURLConnection.getInputStream();
             T object = null;
-            if (inputStream.available() > 0) {
+            if (responseClass != null && inputStream.available() > 0) {
                 String input = readStream(inputStream);
                 object = objectMapper.readValue(input, responseClass);
             }
             response.data = object;
+
+            String location = httpsURLConnection.getHeaderField("location");
+            if (!isBlank(location)) {
+                response.location = location;
+            }
         } catch (JsonMappingException ex) {
             response.error = ex.getMessage();
         } catch (IOException ex) {
-            InputStream errorStream = httpURLConnection.getErrorStream();
+            InputStream errorStream = httpsURLConnection.getErrorStream();
             try {
                 response.error = readStream(errorStream);
             } catch (IOException exError) {
@@ -124,7 +176,6 @@ public class HttpClient {
             while ((line = in.readLine()) != null) {
                 builder.append(line);
             }
-            in.close();
         }
 
         return builder.toString();
@@ -135,6 +186,7 @@ public class HttpClient {
         private int httpCode;
         private T data;
         private String error;
+        private String location;
 
         public int getHttpCode() {
             return httpCode;
@@ -146,6 +198,18 @@ public class HttpClient {
 
         public String getError() {
             return error;
+        }
+
+        public String getLocation() {
+            return location;
+        }
+
+        public URL getLocationAsUrl() {
+            try {
+                return new URL(location);
+            } catch (MalformedURLException e) {
+                throw new IllegalStateException("Location '" + location + "' holds an invalid URL", e);
+            }
         }
 
     }
@@ -165,4 +229,5 @@ public class HttpClient {
             }
         }
     }
+
 }

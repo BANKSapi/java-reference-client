@@ -6,11 +6,12 @@ import de.banksapi.client.model.outgoing.mgmt.UserOut;
 import de.banksapi.client.services.MgmtService;
 import de.banksapi.client.services.OAuth2Service;
 import de.banksapi.client.services.internal.HttpClient.Response;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
+import java.net.URL;
 import java.util.UUID;
 
 import static de.banksapi.client.TestAuthData.ADMIN_CLIENT_PASSWORD;
@@ -24,17 +25,29 @@ public class MgmtServiceTest implements BanksapiTest {
     private static Client client;
     private static ClientRole clientRole;
     private static UUID addedUser;
+    private static String addedUsername;
+    private static boolean init = false;
 
-    @BeforeClass
-    public static void setUp() throws Exception {
-        OAuth2Token token = new OAuth2Service().getClientToken(ADMIN_CLIENT_USERNAME, ADMIN_CLIENT_PASSWORD);
-        mgmtService = new MgmtService(token);
-        Response<TenantList> tenantResponse = mgmtService.getTenants();
-        tenant = tenantResponse.getData().get(0);
-        Response<ClientList> clientResponse = mgmtService.getClients(tenant.getName());
-        client = clientResponse.getData().get(0);
+    @Before
+    public void setUp() throws Exception {
+        if (!init) {
+            BANKSapi.init(new URL("https://localhost"));
+            init = true;
+        }
 
-        if (client.getClientRoles().iterator().hasNext()) {
+        if (mgmtService == null) {
+            OAuth2Token token = new OAuth2Service().getClientToken(ADMIN_CLIENT_USERNAME, ADMIN_CLIENT_PASSWORD);
+            mgmtService = new MgmtService(token);
+        }
+        if (tenant == null) {
+            Response<TenantList> tenantResponse = mgmtService.getTenants();
+            tenant = tenantResponse.getData().get(0);
+        }
+        if (client == null) {
+            Response<ClientList> clientResponse = mgmtService.getClients(tenant.getName());
+            client = clientResponse.getData().get(0);
+        }
+        if (clientRole == null && client.getClientRoles().iterator().hasNext()) {
             clientRole = client.getClientRoles().iterator().next();
         }
     }
@@ -143,6 +156,9 @@ public class MgmtServiceTest implements BanksapiTest {
 
         Response<String> response = mgmtService.addUser(tenant.getName(), user);
         basicResponseCheck(response, 201);
+
+        addedUser = getUserIdFromLocation(response.getLocation());
+        addedUsername = user.getUsername();
     }
 
     @Test
@@ -151,8 +167,6 @@ public class MgmtServiceTest implements BanksapiTest {
         basicResponseCheckData(response, 200, "get users");
 
         assert response.getData().size() > 0 : "tenant without users";
-
-        addedUser = response.getData().get(0).getId();
     }
 
     @Test
@@ -175,6 +189,48 @@ public class MgmtServiceTest implements BanksapiTest {
                     client.getName(), clientRole.getName());
             basicResponseCheckData(response200, 200, "get client role users");
         }
+    }
+
+    @Test
+    public void test11DeactivateUser() {
+        Response response = mgmtService.deactivateUser(tenant.getName(), addedUser);
+        basicResponseCheck(response, 200);
+    }
+
+    @Test
+    public void test12GetDeactivatedUser() {
+        Response<UserIn> responseSingle = mgmtService.getUser(tenant.getName(), addedUser);
+        basicResponseCheck(responseSingle, 404);
+
+        Response<UserInList> responseList = mgmtService.getUsers(tenant.getName());
+        assert responseList.getData().stream().noneMatch(userIn -> addedUser.equals(userIn.getId()))
+                : "deactivated user is still present in tenant's user list";
+    }
+
+    @Test
+    public void test13ReactivateUser() {
+        UserOut user400 = new UserOut(generateRandomString(), generateRandomString(),
+                generateRandomString(), generateRandomString());
+
+        Response response400 = mgmtService.reactivateUser(tenant.getName(), addedUser, user400);
+        assert response400.getHttpCode() == 400 : "HTTP code " + response400.getHttpCode() + " (actual) " +
+                "!= 400 (expected)";
+
+        UserOut user200 = new UserOut(addedUsername, generateRandomString(),
+                generateRandomString(), generateRandomString());
+
+        Response response200 = mgmtService.reactivateUser(tenant.getName(), addedUser, user200);
+        basicResponseCheck(response200, 200);
+    }
+
+    @Test
+    public void test14DeactivateUser() {
+        Response response = mgmtService.deactivateUser(tenant.getName(), addedUser);
+        basicResponseCheck(response, 200);
+    }
+
+    private UUID getUserIdFromLocation(String location) {
+        return UUID.fromString(location.substring(location.lastIndexOf("/") + 1));
     }
 
 }

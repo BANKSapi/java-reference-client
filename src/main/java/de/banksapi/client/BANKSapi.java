@@ -2,14 +2,13 @@ package de.banksapi.client;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.regex.Pattern;
+
+import static de.banksapi.client.services.internal.StringUtil.isBlank;
 
 /**
  * Initializes the BANKSapi base URL to be used by the reference client.
  */
 public class BANKSapi {
-
-    private static Pattern strWithVisibleCharacters = Pattern.compile(".*\\p{Graph}.*");
 
     private static URL banksapiBaseUrl;
 
@@ -48,18 +47,6 @@ public class BANKSapi {
             BANKSapi.banksapiBaseUrl = banksapiBaseUrl;
         } else {
             throw new IllegalStateException("init(URL) called but base URL is already initialized");
-        }
-    }
-
-    private static boolean isBlank(String string) {
-        if (string == null) {
-            return true;
-        } else if (string.isEmpty()) {
-            return true;
-        } else if (!strWithVisibleCharacters.matcher(string).matches()) {
-            return true;
-        } else {
-            return false;
         }
     }
 
