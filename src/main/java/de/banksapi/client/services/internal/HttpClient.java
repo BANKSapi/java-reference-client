@@ -26,10 +26,15 @@ public class HttpClient {
 
     private ObjectMapper objectMapper;
 
+    private final static int connectTimeout = 30000; // 30 seconds in ms
+    private final static int readTimeout = 300000; // five minutes in ms
+
     public HttpClient(URL url, PropertyNamingStrategy propertyNamingStrategy) {
         try {
             this.url = url;
             httpsURLConnection = (HttpsURLConnection) this.url.openConnection();
+            httpsURLConnection.setConnectTimeout(connectTimeout);
+            httpsURLConnection.setReadTimeout(readTimeout);
             objectMapper = new ObjectMapper().setPropertyNamingStrategy(
                     propertyNamingStrategy.toJacksonStrategy());
         } catch (MalformedURLException e) {
