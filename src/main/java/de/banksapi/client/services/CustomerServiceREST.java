@@ -29,7 +29,7 @@ public class CustomerServiceREST extends CustomerServiceBase {
      *
      * @param oAuth2Token a valid OAuth2 token to send along requests
      */
-    CustomerServiceREST(OAuth2Token oAuth2Token) {
+    public CustomerServiceREST(OAuth2Token oAuth2Token) {
         super(oAuth2Token);
     }
 
@@ -42,7 +42,7 @@ public class CustomerServiceREST extends CustomerServiceBase {
      * @param oAuth2Token a valid OAuth2 token to send along requests
      * @param cryptoService Crypto service to use for credentials encryption
      */
-    CustomerServiceREST(OAuth2Token oAuth2Token, CryptoService cryptoService) {
+    public CustomerServiceREST(OAuth2Token oAuth2Token, CryptoService cryptoService) {
         super(oAuth2Token, cryptoService);
     }
 

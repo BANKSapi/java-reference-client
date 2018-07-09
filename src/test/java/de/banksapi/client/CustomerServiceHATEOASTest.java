@@ -20,7 +20,7 @@ import static de.banksapi.client.TestCredentials.ACCOUNT_ID;
 import static junit.framework.TestCase.fail;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class CustomerServiceTest implements BanksapiTest {
+public class CustomerServiceHATEOASTest implements BanksapiTest {
 
     private static CustomerServiceHATEOAS customerService;
 
