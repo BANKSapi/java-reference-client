@@ -6,10 +6,12 @@ import java.util.UUID;
 
 public interface BanksapiTest {
 
-    default void basicResponseCheck(HttpClient.Response response, int expectedHttpCode) {
-        assert response.getError() == null : "An error occurred: " + response.getError();
-        int actualHttpCode = response.getHttpCode();
-        assert actualHttpCode == expectedHttpCode : "HTTP code " + actualHttpCode + " (actual) " +
+    default void basicResponseCheck(HttpClient.Response response, Integer expectedHttpCode) {
+        Integer actualHttpCode = response.getHttpCode();
+        String status = actualHttpCode != null ? actualHttpCode.toString() : "null";
+        assert response.getError() == null : "An error occurred: " + response.getError() +
+                " (HTTP " + status + ")";
+        assert expectedHttpCode.equals(actualHttpCode) : "HTTP code " + actualHttpCode + " (actual) " +
                 "!= " + expectedHttpCode + " (expected)";
     }
 

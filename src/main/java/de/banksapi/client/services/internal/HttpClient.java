@@ -1,7 +1,6 @@
 package de.banksapi.client.services.internal;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -144,10 +143,13 @@ public class HttpClient {
             response.httpCode = httpsURLConnection.getResponseCode();
 
             InputStream inputStream = httpsURLConnection.getInputStream();
+            InputStream errorStream = httpsURLConnection.getErrorStream();
             T object = null;
             if (responseClass != null && inputStream.available() > 0) {
                 String input = readStream(inputStream);
                 object = objectMapper.readValue(input, responseClass);
+            } else if (errorStream.available() > 0) {
+                response.error = readStream(errorStream);
             }
             response.data = object;
 
@@ -155,15 +157,8 @@ public class HttpClient {
             if (!isBlank(location)) {
                 response.location = location;
             }
-        } catch (JsonMappingException ex) {
+        } catch (Exception ex) {
             response.error = ex.getMessage();
-        } catch (IOException ex) {
-            InputStream errorStream = httpsURLConnection.getErrorStream();
-            try {
-                response.error = readStream(errorStream);
-            } catch (IOException exError) {
-                throw new IllegalStateException("Unable to read error stream", exError);
-            }
         }
 
         return response;
@@ -188,12 +183,12 @@ public class HttpClient {
 
     public static class Response<T> {
 
-        private int httpCode;
+        private Integer httpCode;
         private T data;
         private String error;
         private String location;
 
-        public int getHttpCode() {
+        public Integer getHttpCode() {
             return httpCode;
         }
 
