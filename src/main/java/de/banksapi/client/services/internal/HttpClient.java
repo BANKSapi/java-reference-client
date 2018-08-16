@@ -158,7 +158,11 @@ public class HttpClient {
                 response.location = location;
             }
         } catch (Exception ex) {
-            response.error = ex.getMessage();
+            String serverMessage = "";
+            try {
+                serverMessage = "; server message: " + readStream(httpsURLConnection.getErrorStream());
+            } catch (IOException ignored) {}
+            response.error = ex.getMessage() + serverMessage;
         }
 
         return response;
