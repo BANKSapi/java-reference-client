@@ -4,6 +4,7 @@ import de.banksapi.client.crypto.CryptoService;
 import de.banksapi.client.crypto.CryptoServiceTest;
 import de.banksapi.client.model.incoming.access.*;
 import de.banksapi.client.model.incoming.oauth2.OAuth2Token;
+import de.banksapi.client.model.outgoing.access.LoginCredentialsMap;
 import de.banksapi.client.model.outgoing.access.Ueberweisung;
 import de.banksapi.client.services.CustomerServiceREST;
 import de.banksapi.client.services.OAuth2Service;
@@ -11,16 +12,21 @@ import de.banksapi.client.services.internal.HttpClient.Response;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
+import org.junit.runners.Parameterized;
 
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.UUID;
 
 import static de.banksapi.client.TestAuthData.*;
-import static de.banksapi.client.TestCredentials.ACCOUNT_ID;
+import static de.banksapi.client.TestCredentials.getCredentialsMap;
 import static junit.framework.TestCase.fail;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@RunWith(Parameterized.class)
 public class CustomerServiceRESTTest implements BanksapiTest {
 
     private static CustomerServiceREST customerService;
@@ -30,6 +36,17 @@ public class CustomerServiceRESTTest implements BanksapiTest {
     private static Bankzugang bankingAccount;
 
     private static Bankprodukt bankingProduct;
+
+    private LoginCredentialsMap loginCredentialsMap;
+
+    @Parameterized.Parameters(name = "{0}")
+    public static Collection<LoginCredentialsMap> data() {
+        return Arrays.asList(getCredentialsMap(false), getCredentialsMap(true));
+    }
+
+    public CustomerServiceRESTTest(LoginCredentialsMap loginCredentialsMap) {
+        this.loginCredentialsMap = loginCredentialsMap;
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -57,7 +74,7 @@ public class CustomerServiceRESTTest implements BanksapiTest {
 
     @Test
     public void test030AddBankingAccount() {
-        Response<String> response = customerService.addBankzugaenge(TestCredentials.getCredentialsMap());
+        Response<String> response = customerService.addBankzugaenge(loginCredentialsMap);
         basicResponseCheck(response, 201);
     }
 
@@ -134,13 +151,13 @@ public class CustomerServiceRESTTest implements BanksapiTest {
 
     @Test
     public void test110GetBankzugang() {
-        Response<Bankzugang> response = customerService.getBankzugang(ACCOUNT_ID);
+        Response<Bankzugang> response = customerService.getBankzugang(loginCredentialsMap.getFirstAccountId());
         basicResponseCheck(response, 404);
     }
 
     @Test
     public void test120AddBankzugang() {
-        Response<String> response = customerService.addBankzugaenge(TestCredentials.getCredentialsMap());
+        Response<String> response = customerService.addBankzugaenge(loginCredentialsMap);
         basicResponseCheck(response, 201);
     }
 
@@ -152,7 +169,7 @@ public class CustomerServiceRESTTest implements BanksapiTest {
                 .withEmpfaenger("Jane Doe")
                 .withVerwendungszweck("Test")
                 .withIban("DE44500105175407324931")
-                .withCredentials(TestCredentials.getCredentialsMap().get(ACCOUNT_ID).getCredentials())
+                .withCredentials(loginCredentialsMap.get(loginCredentialsMap.getFirstAccountId()).getCredentials())
                 .withTanMediumName("")
                 .withSicherheitsverfahrenKodierung("0")
                 .build();
@@ -162,9 +179,9 @@ public class CustomerServiceRESTTest implements BanksapiTest {
                 .filter(myBankingProduct -> myBankingProduct.hasRelation("start_ueberweisung"))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("account has no products able to " +
-                        "perform tranfers"));
+                        "perform transfers"));
 
-        UUID providerId = TestCredentials.getCredentialsMap().get(ACCOUNT_ID).getProviderId();
+        UUID providerId = loginCredentialsMap.get(loginCredentialsMap.getFirstAccountId()).getProviderId();
         Response<UeberweisungErgebnis> response = customerService.createUeberweisung(providerId.toString(),
                 capableBankingProduct.getId(), transfer);
         basicResponseCheckData(response, 200, "create transfer");
@@ -172,13 +189,13 @@ public class CustomerServiceRESTTest implements BanksapiTest {
 
     @Test
     public void test140DeleteBankzugang() {
-        Response<String> addResponse = customerService.addBankzugaenge(TestCredentials.getCredentialsMap());
+        Response<String> addResponse = customerService.addBankzugaenge(loginCredentialsMap);
         basicResponseCheck(addResponse, 201);
 
-        Response<Bankzugang> getResponse = customerService.getBankzugang(ACCOUNT_ID);
+        Response<Bankzugang> getResponse = customerService.getBankzugang(loginCredentialsMap.getFirstAccountId());
         basicResponseCheck(getResponse, 200);
 
-        Response<String> deleteResponse = customerService.deleteBankzugang(ACCOUNT_ID);
+        Response<String> deleteResponse = customerService.deleteBankzugang(loginCredentialsMap.getFirstAccountId());
         basicResponseCheck(deleteResponse, 200);
     }
 

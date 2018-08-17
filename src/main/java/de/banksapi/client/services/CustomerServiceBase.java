@@ -51,7 +51,8 @@ class CustomerServiceBase implements OAuthAwareService {
 
         loginCredentialsMap.forEach((bankzugangId, loginCredentials) -> {
             Map<String, String> encryptedLC = encryptCredentials(loginCredentials.getCredentials());
-            LoginCredentials lc = new LoginCredentials(loginCredentials.getProviderId(), encryptedLC);
+            LoginCredentials lc = new LoginCredentials(loginCredentials.getProviderId(), encryptedLC,
+                    loginCredentials.isSync());
             encryptedLCM.put(bankzugangId, lc);
         });
 

@@ -32,6 +32,8 @@ public class Bankzugang implements Relations {
     private Collection<Relation> relations;
     private Collection<Message> messages;
 
+    private boolean sync;
+
     public BankzugangStatus getStatus() {
         return status;
     }
@@ -67,5 +69,9 @@ public class Bankzugang implements Relations {
 
     public Collection<Message> getMessages() {
         return messages;
+    }
+
+    public boolean isSync() {
+        return sync;
     }
 }

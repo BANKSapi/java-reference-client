@@ -4,22 +4,28 @@ import de.banksapi.client.crypto.CryptoService;
 import de.banksapi.client.crypto.CryptoServiceTest;
 import de.banksapi.client.model.incoming.access.*;
 import de.banksapi.client.model.incoming.oauth2.OAuth2Token;
+import de.banksapi.client.model.outgoing.access.LoginCredentialsMap;
 import de.banksapi.client.model.outgoing.access.Ueberweisung;
 import de.banksapi.client.services.CustomerServiceHATEOAS;
 import de.banksapi.client.services.OAuth2Service;
 import de.banksapi.client.services.internal.HttpClient.Response;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
+import org.junit.runners.Parameterized;
 
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collection;
 
 import static de.banksapi.client.TestAuthData.*;
-import static de.banksapi.client.TestCredentials.ACCOUNT_ID;
+import static de.banksapi.client.TestCredentials.getCredentialsMap;
 import static junit.framework.TestCase.fail;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@RunWith(Parameterized.class)
 public class CustomerServiceHATEOASTest implements BanksapiTest {
 
     private static CustomerServiceHATEOAS customerService;
@@ -32,13 +38,26 @@ public class CustomerServiceHATEOASTest implements BanksapiTest {
 
     private static Bankprodukt bankingProduct;
 
-    @BeforeClass
-    public static void setUp() throws Exception {
-        OAuth2Token token = new OAuth2Service().getUserToken(CLIENT_USERNAME, CLIENT_PASSWORD,
-                USERNAME, PASSWORD);
-        URL keystore = CryptoServiceTest.class.getResource("/keystore.jks");
-        CryptoService cryptoService = CryptoService.fromKeystore(keystore.getPath(), "demo");
-        customerService = new CustomerServiceHATEOAS(token, cryptoService);
+    private LoginCredentialsMap loginCredentialsMap;
+
+    @Parameterized.Parameters(name = "{0}")
+    public static Collection<LoginCredentialsMap> data() {
+        return Arrays.asList(getCredentialsMap(false), getCredentialsMap(true));
+    }
+
+    public CustomerServiceHATEOASTest(LoginCredentialsMap loginCredentialsMap) {
+        this.loginCredentialsMap = loginCredentialsMap;
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        if (customerService == null) {
+            OAuth2Token token = new OAuth2Service().getUserToken(CLIENT_USERNAME, CLIENT_PASSWORD,
+                    USERNAME, PASSWORD);
+            URL pem = CryptoServiceTest.class.getResource("/public.pem");
+            CryptoService cryptoService = CryptoService.fromX509PEMs(pem.getPath());
+            customerService = new CustomerServiceHATEOAS(token, cryptoService);
+        }
     }
 
     @Test
@@ -57,8 +76,7 @@ public class CustomerServiceHATEOASTest implements BanksapiTest {
 
     @Test
     public void test030AddBankingAccount() {
-        Response<String> response = customerService.addBankzugaenge(customer,
-                TestCredentials.getCredentialsMap());
+        Response<String> response = customerService.addBankzugaenge(customer, loginCredentialsMap);
         basicResponseCheck(response, 201);
     }
 
@@ -133,14 +151,13 @@ public class CustomerServiceHATEOASTest implements BanksapiTest {
 
     @Test
     public void test110GetBankzugang() {
-        Response<Bankzugang> response = customerService.getBankzugang(ACCOUNT_ID);
+        Response<Bankzugang> response = customerService.getBankzugang(loginCredentialsMap.getFirstAccountId());
         basicResponseCheck(response, 404);
     }
 
     @Test
     public void test120AddBankzugang() {
-        Response<String> response = customerService.addBankzugaenge(customer,
-                TestCredentials.getCredentialsMap());
+        Response<String> response = customerService.addBankzugaenge(customer, loginCredentialsMap);
         basicResponseCheck(response, 201);
     }
 
@@ -152,7 +169,7 @@ public class CustomerServiceHATEOASTest implements BanksapiTest {
                 .withEmpfaenger("Jane Doe")
                 .withVerwendungszweck("Test")
                 .withIban("DE44500105175407324931")
-                .withCredentials(TestCredentials.getCredentialsMap().get(ACCOUNT_ID).getCredentials())
+                .withCredentials(loginCredentialsMap.get(loginCredentialsMap.getFirstAccountId()).getCredentials())
                 .withTanMediumName("")
                 .withSicherheitsverfahrenKodierung("0")
                 .build();
@@ -171,11 +188,10 @@ public class CustomerServiceHATEOASTest implements BanksapiTest {
 
     @Test
     public void test140DeleteBankzugang() {
-        Response<String> addResponse = customerService.addBankzugaenge(customer,
-                TestCredentials.getCredentialsMap());
+        Response<String> addResponse = customerService.addBankzugaenge(customer, loginCredentialsMap);
         basicResponseCheck(addResponse, 201);
 
-        Response<Bankzugang> getResponse = customerService.getBankzugang(ACCOUNT_ID);
+        Response<Bankzugang> getResponse = customerService.getBankzugang(loginCredentialsMap.getFirstAccountId());
         basicResponseCheck(getResponse, 200);
 
         Response<String> deleteResponse = customerService.deleteBankzugang(getResponse.getData());

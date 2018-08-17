@@ -15,9 +15,12 @@ public class LoginCredentials {
 
     private Map<String, String> credentials = new HashMap<>();
 
-    public LoginCredentials(UUID providerId, Map<String, String> credentials) {
+    private boolean sync;
+
+    public LoginCredentials(UUID providerId, Map<String, String> credentials, boolean sync) {
         this.providerId = providerId;
         this.credentials.putAll(credentials);
+        this.sync = sync;
     }
 
     public UUID getProviderId() {
@@ -26,6 +29,10 @@ public class LoginCredentials {
 
     public Map<String, String> getCredentials() {
         return credentials;
+    }
+
+    public boolean isSync() {
+        return sync;
     }
 
 }
