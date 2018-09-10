@@ -45,6 +45,18 @@ public class Bankprodukt implements Relations {
     private Double verfuegungsrahmen;
     private Double verfuegterBetrag;
 
+    // only relevant for building savings (Bausparen)
+    private String vertragsnummer;
+    private Double rating;
+    private Double vertragssumme;
+    private String vertragstyp;
+    private Boolean sparzustand;
+    private String vertragsstatus;
+    private Double sparzinssatz;
+    private Double schuldzinssatz;
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    private LocalDateTime vertragsDatum;
+    private Double sparfortschritt;
 
     public String getId() {
         return id;
@@ -121,5 +133,45 @@ public class Bankprodukt implements Relations {
 
     public Double getVerfuegterBetrag() {
         return verfuegterBetrag;
+    }
+
+    public String getVertragsnummer() {
+        return vertragsnummer;
+    }
+
+    public Double getRating() {
+        return rating;
+    }
+
+    public Double getVertragssumme() {
+        return vertragssumme;
+    }
+
+    public String getVertragstyp() {
+        return vertragstyp;
+    }
+
+    public Boolean getSparzustand() {
+        return sparzustand;
+    }
+
+    public String getVertragsstatus() {
+        return vertragsstatus;
+    }
+
+    public Double getSparzinssatz() {
+        return sparzinssatz;
+    }
+
+    public Double getSchuldzinssatz() {
+        return schuldzinssatz;
+    }
+
+    public LocalDateTime getVertragsDatum() {
+        return vertragsDatum;
+    }
+
+    public Double getSparfortschritt() {
+        return sparfortschritt;
     }
 }
