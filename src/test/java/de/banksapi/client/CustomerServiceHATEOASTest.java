@@ -8,7 +8,9 @@ import de.banksapi.client.model.outgoing.access.LoginCredentialsMap;
 import de.banksapi.client.model.outgoing.access.Ueberweisung;
 import de.banksapi.client.services.CustomerServiceHATEOAS;
 import de.banksapi.client.services.OAuth2Service;
+import de.banksapi.client.services.internal.CorrelationIdHolder;
 import de.banksapi.client.services.internal.HttpClient.Response;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -19,6 +21,7 @@ import org.junit.runners.Parameterized;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.UUID;
 
 import static de.banksapi.client.TestAuthData.*;
 import static de.banksapi.client.TestCredentials.getCredentialsMap;
@@ -60,30 +63,39 @@ public class CustomerServiceHATEOASTest implements BanksapiTest {
         }
     }
 
+    @After
+    public void tearDown() {
+        CorrelationIdHolder.remove();
+    }
+
     @Test
     public void test010GetCustomer() {
+        UUID cid = CorrelationIdHolder.genAndSet();
         Response<Customer> response = customerService.getCustomer();
-        basicResponseCheckData(response, 200, "get customer");
+        basicResponseCheckData(response, 200, "get customer", cid);
         customer = response.getData();
     }
 
     @Test
     public void test020GetBankingAccounts() {
+        UUID cid = CorrelationIdHolder.genAndSet();
         Response<BankzugangMap> response = customerService.getBankzugaenge(customer);
-        basicResponseCheckData(response, 200, "get banking accounts");
+        basicResponseCheckData(response, 200, "get banking accounts", cid);
         assert response.getData().isEmpty() : "list of banking accounts is not empty";
     }
 
     @Test
     public void test030AddBankingAccount() {
+        UUID cid = CorrelationIdHolder.genAndSet();
         Response<String> response = customerService.addBankzugaenge(customer, loginCredentialsMap);
-        basicResponseCheck(response, 201);
+        basicResponseCheck(response, 201, cid);
     }
 
     @Test
     public void test040GetBankingAccounts() {
+        UUID cid = CorrelationIdHolder.genAndSet();
         Response<BankzugangMap> response = customerService.getBankzugaenge(customer);
-        basicResponseCheckData(response, 200, "get banking accounts");
+        basicResponseCheckData(response, 200, "get banking accounts", cid);
 
         assert !response.getData().isEmpty() : "list of banking accounts is empty";
         bankingAccountId = response.getData().keySet().iterator().next();
@@ -91,8 +103,9 @@ public class CustomerServiceHATEOASTest implements BanksapiTest {
 
     @Test
     public void test050GetBankingAccount() {
+        UUID cid = CorrelationIdHolder.genAndSet();
         Response<Bankzugang> response = customerService.getBankzugang(bankingAccountId);
-        basicResponseCheckData(response, 200, "get banking account");
+        basicResponseCheckData(response, 200, "get banking account", cid);
         assert !response.getData().getBankprodukte().isEmpty() : "list of banking products is empty";
     }
 
@@ -123,20 +136,22 @@ public class CustomerServiceHATEOASTest implements BanksapiTest {
 
     @Test
     public void test080GetBankprodukt() {
+        UUID cid = CorrelationIdHolder.genAndSet();
         Response<Bankprodukt> response = customerService.getBankprodukt(bankingAccountId,
                 bankingProduct.getId());
-        basicResponseCheckData(response, 200, "get banking product");
+        basicResponseCheckData(response, 200, "get banking product", cid);
     }
 
     @Test
     public void test090GetKontoumsaetzeOrDepotpositionen() {
+        UUID cid = CorrelationIdHolder.genAndSet();
         if (bankingProduct.hasRelation("get_kontoumsaetze")) {
             Response<KontoumsatzList> response = customerService.getKontoumsaetze(bankingProduct);
-            basicResponseCheckData(response, 200, "get turnovers");
+            basicResponseCheckData(response, 200, "get turnovers", cid);
             assert response.getData().size() > 0 : "no turnovers listed";
         } else if (bankingProduct.hasRelation("get_depotpositionen")) {
             Response<DepotpositionList> response = customerService.getDepotpositionen(bankingProduct);
-            basicResponseCheckData(response, 200, "get securites");
+            basicResponseCheckData(response, 200, "get securites", cid);
             assert response.getData().size() > 0 : "no securites listed";
         } else {
             fail("no relation available to get turnovers or securites");
@@ -145,24 +160,28 @@ public class CustomerServiceHATEOASTest implements BanksapiTest {
 
     @Test
     public void test100DeleteBankzugaenge() {
+        UUID cid = CorrelationIdHolder.genAndSet();
         Response<String> response = customerService.deleteBankzugaenge(customer);
-        basicResponseCheck(response, 200);
+        basicResponseCheck(response, 200, cid);
     }
 
     @Test
     public void test110GetBankzugang() {
+        UUID cid = CorrelationIdHolder.genAndSet();
         Response<Bankzugang> response = customerService.getBankzugang(loginCredentialsMap.getFirstAccountId());
-        basicResponseCheck(response, 404);
+        basicResponseCheck(response, 404, cid);
     }
 
     @Test
     public void test120AddBankzugang() {
+        UUID cid = CorrelationIdHolder.genAndSet();
         Response<String> response = customerService.addBankzugaenge(customer, loginCredentialsMap);
-        basicResponseCheck(response, 201);
+        basicResponseCheck(response, 201, cid);
     }
 
     //@Test
     public void test130CreateUeberweisung() {
+        UUID cid = CorrelationIdHolder.genAndSet();
         Ueberweisung transfer = new Ueberweisung.Builder()
                 .withBetrag(0.01)
                 .withWaehrung("EUR")
@@ -183,19 +202,22 @@ public class CustomerServiceHATEOASTest implements BanksapiTest {
 
         Response<UeberweisungErgebnis> response = customerService.createUeberweisung(
                 capableBankingProduct, transfer);
-        basicResponseCheckData(response, 200, "create transfer");
+        basicResponseCheckData(response, 200, "create transfer", cid);
     }
 
     @Test
     public void test140DeleteBankzugang() {
+        UUID cid = CorrelationIdHolder.genAndSet();
         Response<String> addResponse = customerService.addBankzugaenge(customer, loginCredentialsMap);
-        basicResponseCheck(addResponse, 201);
+        basicResponseCheck(addResponse, 201, cid);
 
+        cid = CorrelationIdHolder.genAndSet();
         Response<Bankzugang> getResponse = customerService.getBankzugang(loginCredentialsMap.getFirstAccountId());
-        basicResponseCheck(getResponse, 200);
+        basicResponseCheck(getResponse, 200, cid);
 
+        cid = CorrelationIdHolder.genAndSet();
         Response<String> deleteResponse = customerService.deleteBankzugang(getResponse.getData());
-        basicResponseCheck(deleteResponse, 200);
+        basicResponseCheck(deleteResponse, 200, cid);
     }
 
 }
