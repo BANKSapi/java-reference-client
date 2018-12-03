@@ -43,6 +43,16 @@ public class HttpClient {
         }
     }
 
+    public HttpClient setReadTimeout(int timeout) {
+        httpsURLConnection.setReadTimeout(timeout);
+        return this;
+    }
+
+    public HttpClient setConnectTimeout(int timeout) {
+        httpsURLConnection.setConnectTimeout(timeout);
+        return this;
+    }
+
     public HttpClient setHeader(String key, String value) {
         httpsURLConnection.setRequestProperty(key, value);
         return this;

@@ -4,6 +4,7 @@ import de.banksapi.client.crypto.CryptoService;
 import de.banksapi.client.model.incoming.oauth2.OAuth2Token;
 import de.banksapi.client.model.outgoing.access.LoginCredentials;
 import de.banksapi.client.model.outgoing.access.LoginCredentialsMap;
+import de.banksapi.client.services.internal.HttpClient;
 import de.banksapi.client.services.internal.HttpHelper;
 
 import java.net.URL;
@@ -64,6 +65,10 @@ class CustomerServiceBase implements OAuthAwareService {
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         entry -> cryptoService.encryptToBase64String(entry.getValue())));
+    }
+
+    HttpClient createAccessHttpClient(URL url) {
+        return createAuthenticatingHttpClient(url).setConnectTimeout(30000).setReadTimeout(285000);
     }
 
 }

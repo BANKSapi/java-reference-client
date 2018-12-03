@@ -50,11 +50,11 @@ public class CustomerServiceHATEOAS extends CustomerServiceBase {
     }
 
     public Response<Customer> getCustomer() {
-        return createAuthenticatingHttpClient(CUSTOMER_CONTEXT).get(Customer.class);
+        return createAccessHttpClient(CUSTOMER_CONTEXT).get(Customer.class);
     }
 
     public Response<BankzugangMap> getBankzugaenge(Customer customer) {
-        return createAuthenticatingHttpClient(customer.getUrlForRelation("get_bankzugaenge"))
+        return createAccessHttpClient(customer.getUrlForRelation("get_bankzugaenge"))
                 .get(BankzugangMap.class);
     }
 
@@ -64,37 +64,38 @@ public class CustomerServiceHATEOAS extends CustomerServiceBase {
             loginCredentialsMapToUse = encryptLoginCredentialsMap(loginCredentialsMap);
         }
 
-        return createAuthenticatingHttpClient(customer.getUrlForRelation("add_bankzugaenge"))
+        return createAccessHttpClient(customer.getUrlForRelation("add_bankzugaenge"))
+
                 .post(loginCredentialsMapToUse, String.class);
     }
 
     public Response<String> deleteBankzugaenge(Customer customer) {
-        return createAuthenticatingHttpClient(customer.getUrlForRelation("delete_bankzugaenge"))
+        return createAccessHttpClient(customer.getUrlForRelation("delete_bankzugaenge"))
                 .delete();
     }
 
     public Response<String> deleteBankzugang(Bankzugang account) {
-        return createAuthenticatingHttpClient(account.getUrlForRelation("delete_bankzugang"))
+        return createAccessHttpClient(account.getUrlForRelation("delete_bankzugang"))
                 .delete();
     }
 
     public Response<Bankzugang> getBankzugang(String accountId) {
         URL bankzugaengeUrl = buildUrl(CUSTOMER_CONTEXT, PATH_FMT_BANKZUGANG, accountId);
-        return createAuthenticatingHttpClient(bankzugaengeUrl).get(Bankzugang.class);
+        return createAccessHttpClient(bankzugaengeUrl).get(Bankzugang.class);
     }
 
     public Response<Bankprodukt> getBankprodukt(String accountId, String productId) {
         URL bankzugaengeUrl = buildUrl(CUSTOMER_CONTEXT, PATH_FMT_PRODUKT, accountId, productId);
-        return createAuthenticatingHttpClient(bankzugaengeUrl).get(Bankprodukt.class);
+        return createAccessHttpClient(bankzugaengeUrl).get(Bankprodukt.class);
     }
 
     public Response<KontoumsatzList> getKontoumsaetze(Bankprodukt bankprodukt) {
-        return createAuthenticatingHttpClient(bankprodukt.getUrlForRelation("get_kontoumsaetze"))
+        return createAccessHttpClient(bankprodukt.getUrlForRelation("get_kontoumsaetze"))
                 .get(KontoumsatzList.class);
     }
 
     public Response<DepotpositionList> getDepotpositionen(Bankprodukt bankprodukt) {
-        return createAuthenticatingHttpClient(bankprodukt.getUrlForRelation("get_depotpositionen"))
+        return createAccessHttpClient(bankprodukt.getUrlForRelation("get_depotpositionen"))
                 .get(DepotpositionList.class);
     }
 
@@ -105,7 +106,7 @@ public class CustomerServiceHATEOAS extends CustomerServiceBase {
                     encryptCredentials(ueberweisung.getCredentials()));
         }
 
-        return createAuthenticatingHttpClient(bankprodukt.getUrlForRelation("start_ueberweisung"))
+        return createAccessHttpClient(bankprodukt.getUrlForRelation("start_ueberweisung"))
                 .post(ueberweisung, UeberweisungErgebnis.class);
     }
 
@@ -116,7 +117,7 @@ public class CustomerServiceHATEOAS extends CustomerServiceBase {
         Map<String, String> submitTanBody = new HashMap<>();
         submitTanBody.put("tan", tan);
 
-        return createAuthenticatingHttpClient(submitTanUrl)
+        return createAccessHttpClient(submitTanUrl)
                 .post(submitTanBody, UeberweisungErgebnis.class);
     }
 
