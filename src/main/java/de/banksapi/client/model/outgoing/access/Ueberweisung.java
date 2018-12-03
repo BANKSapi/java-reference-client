@@ -140,7 +140,6 @@ public class Ueberweisung {
             Objects.requireNonNull(ueberweisungToBuild.iban);
             Objects.requireNonNull(ueberweisungToBuild.waehrung);
             Objects.requireNonNull(ueberweisungToBuild.betrag);
-            Objects.requireNonNull(ueberweisungToBuild.tanMediumName);
             Objects.requireNonNull(ueberweisungToBuild.sicherheitsverfahrenKodierung);
             return ueberweisungToBuild;
         }
