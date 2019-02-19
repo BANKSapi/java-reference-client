@@ -19,7 +19,7 @@ https://docs.banksapi.de/javadoc/reference-client/.
 
 # License
 
-Copyright (c) 2018 BANKSapi GmbH
+Copyright (c) 2018-2019 BANKSapi GmbH
 
 https://banksapi.de
 
