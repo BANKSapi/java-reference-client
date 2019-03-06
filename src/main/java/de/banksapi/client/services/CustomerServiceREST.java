@@ -10,6 +10,7 @@ import de.banksapi.client.services.internal.HttpClient.Response;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import static de.banksapi.client.services.internal.HttpHelper.buildUrl;
 
@@ -97,27 +98,25 @@ public class CustomerServiceREST extends CustomerServiceBase {
         return createAccessHttpClient(depotpositionenUrl).get(DepotpositionList.class);
     }
 
-    public Response<UeberweisungErgebnis> createUeberweisung(String providerId, String productId,
+    public Response<UeberweisungErgebnis> createUeberweisung(UUID providerId, String productId,
             Ueberweisung ueberweisung) {
         if (cryptoService != null) {
-            ueberweisung = new Ueberweisung(ueberweisung,
-                    encryptCredentials(ueberweisung.getCredentials()));
+            ueberweisung = new Ueberweisung(ueberweisung, encryptCredentials(ueberweisung.getCredentials()));
         }
 
-        URL ueberweisungUrl = buildUrl(CUSTOMER_CONTEXT, PATH_FMT_UEBERWEISUNG, providerId, productId);
-        return createAccessHttpClient(ueberweisungUrl)
-                .post(ueberweisung, UeberweisungErgebnis.class);
+        URL ueberweisungUrl = buildUrl(CUSTOMER_CONTEXT, PATH_FMT_UEBERWEISUNG, providerId.toString(), productId);
+        return createAccessHttpClient(ueberweisungUrl).post(ueberweisung, UeberweisungErgebnis.class);
     }
 
-    public Response<UeberweisungErgebnis> submitTextTan(String providerId, String productId,
+    public Response<UeberweisungErgebnis> submitTextTan(UUID providerId, String productId, UUID tanToken,
             String tan) {
-        URL submitTanUrl = buildUrl(CUSTOMER_CONTEXT, PATH_FMT_SUBMIT_TAN, providerId, productId, tan);
+        URL submitTanUrl = buildUrl(CUSTOMER_CONTEXT, PATH_FMT_SUBMIT_TAN, providerId.toString(), productId,
+                tanToken.toString());
 
         Map<String, String> submitTanBody = new HashMap<>();
         submitTanBody.put("tan", tan);
 
-        return createAccessHttpClient(submitTanUrl)
-                .post(submitTanBody, UeberweisungErgebnis.class);
+        return createAccessHttpClient(submitTanUrl).put(submitTanBody, UeberweisungErgebnis.class);
     }
 
 }

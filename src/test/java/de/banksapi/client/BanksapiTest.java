@@ -8,6 +8,9 @@ import static org.junit.Assert.fail;
 
 public interface BanksapiTest {
 
+    String BA_CODE_TRANSFER_CREATED = "BA1110";
+    String BA_CODE_TAN_SUBMITTED = "BA1111";
+
     default void basicResponseCheck(Response response, Integer expectedHttpCode, UUID cid) {
         Integer actualHttpCode = response.getHttpCode();
         if (!expectedHttpCode.equals(actualHttpCode)) {
@@ -31,4 +34,5 @@ public interface BanksapiTest {
         return "An error occurred: " + response.getError() + " (HTTP " + response.getHttpCode() + ", " +
                 "CID " + cid + ")";
     }
+
 }

@@ -41,6 +41,8 @@ public class CustomerServiceHATEOASTest implements BanksapiTest {
 
     private static Bankprodukt bankingProduct;
 
+    private static UeberweisungErgebnis transferResult;
+
     private LoginCredentialsMap loginCredentialsMap;
 
     @Parameterized.Parameters(name = "{0}")
@@ -111,6 +113,7 @@ public class CustomerServiceHATEOASTest implements BanksapiTest {
 
     @Test
     public void test060GetBankingAccountWaitComplete() throws InterruptedException {
+        UUID cid = CorrelationIdHolder.genAndSet();
         boolean complete = false;
         int triesTillFail = 10;
         int pollingInterval = 2000;
@@ -118,6 +121,7 @@ public class CustomerServiceHATEOASTest implements BanksapiTest {
         Response<Bankzugang> response = null;
         while (!complete && triesTillFail-- > 0) {
             response = customerService.getBankzugang(bankingAccountId);
+            basicResponseCheckData(response, 200, "get banking product while waiting", cid);
             complete = BankzugangStatus.VOLLSTAENDIG.equals(response.getData().getStatus());
             Thread.sleep(pollingInterval);
         }
@@ -179,7 +183,7 @@ public class CustomerServiceHATEOASTest implements BanksapiTest {
         basicResponseCheck(response, 201, cid);
     }
 
-    //@Test
+    @Test
     public void test130CreateUeberweisung() {
         UUID cid = CorrelationIdHolder.genAndSet();
         Ueberweisung transfer = new Ueberweisung.Builder()
@@ -190,7 +194,7 @@ public class CustomerServiceHATEOASTest implements BanksapiTest {
                 .withIban("DE44500105175407324931")
                 .withCredentials(loginCredentialsMap.get(loginCredentialsMap.getFirstAccountId()).getCredentials())
                 .withTanMediumName("")
-                .withSicherheitsverfahrenKodierung("0")
+                .withSicherheitsverfahrenKodierung("1")
                 .build();
 
         // find suitable banking product that can be used for transfers
@@ -203,10 +207,25 @@ public class CustomerServiceHATEOASTest implements BanksapiTest {
         Response<UeberweisungErgebnis> response = customerService.createUeberweisung(
                 capableBankingProduct, transfer);
         basicResponseCheckData(response, 200, "create transfer", cid);
+
+        assert response.getData().containsMessageCode(BA_CODE_TRANSFER_CREATED) :
+                "create transfer result does not contain message code " + BA_CODE_TRANSFER_CREATED;
+
+        transferResult = response.getData();
     }
 
     @Test
-    public void test140DeleteBankzugang() {
+    public void test140SubmitTan() {
+        UUID cid = CorrelationIdHolder.genAndSet();
+        Response<UeberweisungErgebnis> response = customerService.submitTextTan(transferResult, "42");
+        basicResponseCheckData(response, 200, "submit tan", cid);
+
+        assert response.getData().containsMessageCode(BA_CODE_TAN_SUBMITTED) :
+                "submit tan result does not contain message code " + BA_CODE_TAN_SUBMITTED;
+    }
+
+    @Test
+    public void test150DeleteBankzugang() {
         UUID cid = CorrelationIdHolder.genAndSet();
         Response<String> addResponse = customerService.addBankzugaenge(customer, loginCredentialsMap);
         basicResponseCheck(addResponse, 201, cid);
