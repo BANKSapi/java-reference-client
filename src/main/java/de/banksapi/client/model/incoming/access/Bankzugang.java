@@ -2,6 +2,7 @@ package de.banksapi.client.model.incoming.access;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.banksapi.client.model.LocalDateTimeDeserializer;
+import de.banksapi.client.model.incoming.Messages;
 import de.banksapi.client.model.incoming.Relation;
 import de.banksapi.client.model.incoming.Relations;
 
@@ -13,7 +14,7 @@ import java.util.Collection;
  * informationen about the account's second factor authentication configuration used for
  * transactions.
  */
-public class Bankzugang implements Relations {
+public class Bankzugang implements Relations, Messages {
 
     private BankzugangStatus status;
 
@@ -67,6 +68,7 @@ public class Bankzugang implements Relations {
         return relations;
     }
 
+    @Override
     public Collection<Message> getMessages() {
         return messages;
     }

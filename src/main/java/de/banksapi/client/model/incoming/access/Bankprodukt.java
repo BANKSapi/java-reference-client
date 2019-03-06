@@ -2,6 +2,7 @@ package de.banksapi.client.model.incoming.access;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.banksapi.client.model.LocalDateTimeDeserializer;
+import de.banksapi.client.model.incoming.Messages;
 import de.banksapi.client.model.incoming.Relation;
 import de.banksapi.client.model.incoming.Relations;
 
@@ -12,8 +13,7 @@ import java.util.Collection;
  * A Bankprodukt (banking product) is BANKSapi's representation of a bank account, depot or credit
  * card.
  */
-//@JsonIgnore
-public class Bankprodukt implements Relations {
+public class Bankprodukt implements Relations, Messages {
 
     private String id;
     private String bezeichnung;
@@ -115,6 +115,7 @@ public class Bankprodukt implements Relations {
         return relations;
     }
 
+    @Override
     public Collection<Message> getMessages() {
         return messages;
     }

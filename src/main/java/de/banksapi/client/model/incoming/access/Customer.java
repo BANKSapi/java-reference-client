@@ -1,5 +1,6 @@
 package de.banksapi.client.model.incoming.access;
 
+import de.banksapi.client.model.incoming.Messages;
 import de.banksapi.client.model.incoming.Relation;
 import de.banksapi.client.model.incoming.Relations;
 
@@ -9,7 +10,7 @@ import java.util.Map;
 /**
  * A customer instance serves as a bracket for all Banks/Connect data.
  */
-public class Customer implements Relations {
+public class Customer implements Relations, Messages {
 
     private Map<String, Bankzugang> bankzugaenge;
 
@@ -25,6 +26,7 @@ public class Customer implements Relations {
         return relations;
     }
 
+    @Override
     public Collection<Message> getMessages() {
         return messages;
     }
