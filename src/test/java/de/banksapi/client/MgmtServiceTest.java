@@ -12,7 +12,6 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import java.net.URL;
 import java.util.UUID;
 
 import static de.banksapi.client.TestAuthData.ADMIN_CLIENT_PASSWORD;
@@ -27,15 +26,9 @@ public class MgmtServiceTest implements BanksapiTest {
     private static ClientRole clientRole;
     private static UUID addedUser;
     private static String addedUsername;
-    private static boolean init = false;
 
     @Before
-    public void setUp() throws Exception {
-        if (!init) {
-            BANKSapi.init(new URL("https://localhost"));
-            init = true;
-        }
-
+    public void setUp() {
         if (mgmtService == null) {
             OAuth2Token token = new OAuth2Service().getClientToken(ADMIN_CLIENT_USERNAME, ADMIN_CLIENT_PASSWORD);
             mgmtService = new MgmtService(token);

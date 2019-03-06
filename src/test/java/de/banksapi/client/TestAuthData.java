@@ -4,7 +4,7 @@ package de.banksapi.client;
  * This class holds authentication data for BANKSapi clients and users. The BANKSapi reference
  * client test suite can only be successfully executed if the data in this file is valid.
  */
-public class TestAuthData {
+class TestAuthData {
 
     final static String CLIENT_USERNAME = "tenant/clientName";
     final static String CLIENT_PASSWORD = "verysecret";

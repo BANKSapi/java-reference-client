@@ -6,7 +6,7 @@ import de.banksapi.client.model.incoming.providers.ProviderList;
 import de.banksapi.client.services.OAuth2Service;
 import de.banksapi.client.services.ProvidersService;
 import de.banksapi.client.services.internal.HttpClient.Response;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.UUID;
@@ -17,11 +17,13 @@ public class ProvidersServiceTest {
 
     private static ProvidersService providersService;
 
-    @BeforeClass
-    public static void setUp() throws Exception {
-        OAuth2Token token = new OAuth2Service().getUserToken(CLIENT_USERNAME, CLIENT_PASSWORD,
-                USERNAME, PASSWORD);
-        providersService = new ProvidersService(token);
+    @Before
+    public void setUp() {
+        if (providersService == null) {
+            OAuth2Token token = new OAuth2Service().getUserToken(CLIENT_USERNAME, CLIENT_PASSWORD,
+                    USERNAME, PASSWORD);
+            providersService = new ProvidersService(token);
+        }
     }
 
     @Test
