@@ -17,11 +17,14 @@ public class UeberweisungErgebnis implements Relations, Messages {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime timeout;
 
+    private Challenge challenge;
+
     @Override
     public Collection<Message> getMessages() {
         return messages;
     }
 
+    @Override
     public Collection<Relation> getRelations() {
         return relations;
     }
@@ -29,4 +32,9 @@ public class UeberweisungErgebnis implements Relations, Messages {
     public LocalDateTime getTimeout() {
         return timeout;
     }
+
+    public Challenge getChallenge() {
+        return challenge;
+    }
+
 }
