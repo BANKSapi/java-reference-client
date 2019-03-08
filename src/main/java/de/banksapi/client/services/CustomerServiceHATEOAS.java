@@ -14,7 +14,7 @@ import java.util.Map;
 import static de.banksapi.client.services.internal.HttpHelper.buildUrl;
 
 /**
- * This service interfaces with the Banks/Connect Customer API. This API provides all relevant
+ * This service interfaces with the BANKS/Connect Customer API. This API provides all relevant
  * customer information, such as banking accounts, products and turnovers.
  *
  * <p>This service uses the APIs in the HATEOAS style.</p>

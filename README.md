@@ -2,8 +2,8 @@
 
 This is the reference implementation of a BANKSapi client. This client
 interfaces with the following BANKSapi APIs:
-* Banks/Connect Customer API
-* Banks/Connect Providers API
+* BANKS/Connect Customer API
+* BANKS/Connect Providers API
 * Auth Management API
 * Auth OAuth2 API
 
