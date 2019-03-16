@@ -1,10 +1,12 @@
 package de.banksapi.client.model.incoming.access;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.Arrays;
 import java.util.Map;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Challenge {
 
     private ChallengeType name;

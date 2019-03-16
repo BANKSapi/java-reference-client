@@ -1,5 +1,6 @@
 package de.banksapi.client.model.incoming.access;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.banksapi.client.model.LocalDateTimeDeserializer;
 import de.banksapi.client.model.incoming.Messages;
@@ -14,6 +15,7 @@ import java.util.Collection;
  * informationen about the account's second factor authentication configuration used for
  * transactions.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Bankzugang implements Relations, Messages {
 
     private BankzugangStatus status;

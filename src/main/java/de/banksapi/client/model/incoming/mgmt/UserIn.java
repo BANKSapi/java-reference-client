@@ -1,8 +1,11 @@
 package de.banksapi.client.model.incoming.mgmt;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.List;
 import java.util.UUID;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserIn {
 
     private UUID id;

@@ -1,5 +1,8 @@
 package de.banksapi.client.model.incoming.access;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Sicherheitsverfahren {
 
     private Integer kodierung;

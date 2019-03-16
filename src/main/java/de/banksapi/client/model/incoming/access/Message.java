@@ -1,8 +1,11 @@
 package de.banksapi.client.model.incoming.access;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Messages containing status information about account data retrieval.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Message {
 
     private MessageLevel level;

@@ -5,5 +5,4 @@ import java.util.ArrayList;
 /**
  * A list of account turnovers.
  */
-public class KontoumsatzList extends ArrayList<Kontoumsatz> {
-}
+public class KontoumsatzList extends ArrayList<Kontoumsatz> {}

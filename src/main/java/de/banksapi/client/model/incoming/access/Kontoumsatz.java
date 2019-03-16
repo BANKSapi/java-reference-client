@@ -1,5 +1,6 @@
 package de.banksapi.client.model.incoming.access;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.banksapi.client.model.LocalDateTimeDeserializer;
 import de.banksapi.client.model.incoming.Relation;
@@ -12,6 +13,7 @@ import java.util.UUID;
 /**
  * A Kontoumsatz (account turnover) contains all information about account movements.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Kontoumsatz implements Relations {
 
     private UUID id;

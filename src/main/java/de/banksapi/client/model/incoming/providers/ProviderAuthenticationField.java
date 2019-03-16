@@ -1,5 +1,8 @@
 package de.banksapi.client.model.incoming.providers;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProviderAuthenticationField {
 
     private String fieldkey;

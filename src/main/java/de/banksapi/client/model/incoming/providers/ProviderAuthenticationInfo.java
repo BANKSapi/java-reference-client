@@ -1,7 +1,10 @@
 package de.banksapi.client.model.incoming.providers;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProviderAuthenticationInfo {
 
     private String loginHint;
