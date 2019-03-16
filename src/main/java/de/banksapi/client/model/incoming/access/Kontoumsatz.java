@@ -7,12 +7,14 @@ import de.banksapi.client.model.incoming.Relations;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.UUID;
 
 /**
  * A Kontoumsatz (account turnover) contains all information about account movements.
  */
 public class Kontoumsatz implements Relations {
 
+    private UUID id;
     private double betrag;
     private String verwendungszweck;
     private String buchungstext;
@@ -29,7 +31,13 @@ public class Kontoumsatz implements Relations {
     private String gvCode;
     private String primanotaNummer;
 
+    private String hash;
+
     private Collection<Relation> relations;
+
+    public UUID getId() {
+        return id;
+    }
 
     public double getBetrag() {
         return betrag;
@@ -69,6 +77,10 @@ public class Kontoumsatz implements Relations {
 
     public String getPrimanotaNummer() {
         return primanotaNummer;
+    }
+
+    public String getHash() {
+        return hash;
     }
 
     public Collection<Relation> getRelations() {
