@@ -162,17 +162,17 @@ public class HttpClient {
                 response.error = readStream(errorStream);
             }
             response.data = object;
-
-            String location = httpsURLConnection.getHeaderField("location");
-            if (!isBlank(location)) {
-                response.location = location;
-            }
         } catch (Exception ex) {
             String serverMessage = "";
             try {
                 serverMessage = "; server message: " + readStream(httpsURLConnection.getErrorStream());
             } catch (IOException ignored) {}
             response.error = ex.getMessage() + serverMessage;
+        } finally {
+            String location = httpsURLConnection.getHeaderField("location");
+            if (!isBlank(location)) {
+                response.location = location;
+            }
         }
 
         return response;
