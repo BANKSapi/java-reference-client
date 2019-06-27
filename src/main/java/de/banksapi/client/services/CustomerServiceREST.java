@@ -93,6 +93,11 @@ public class CustomerServiceREST extends CustomerServiceBase {
         return createAccessHttpClient(kontoumsaetzeUrl).get(KontoumsatzList.class);
     }
 
+    public Response<KontoumsatzKategorisiertList> getKontoumsaetzeKategorisiert(String accountId, String productId) {
+        URL kontoumsaetzeUrl = buildUrl(CUSTOMER_CONTEXT, PATH_FMT_KONTOUMSAETZE_KATEGORISIERT, accountId, productId);
+        return createAccessHttpClient(kontoumsaetzeUrl).get(KontoumsatzKategorisiertList.class);
+    }
+
     public Response<DepotpositionList> getDepotpositionen(String accountId, String productId) {
         URL depotpositionenUrl = buildUrl(CUSTOMER_CONTEXT, PATH_FMT_DEPOTPOSITIONEN, accountId, productId);
         return createAccessHttpClient(depotpositionenUrl).get(DepotpositionList.class);

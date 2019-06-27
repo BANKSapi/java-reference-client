@@ -22,6 +22,7 @@ class CustomerServiceBase implements OAuthAwareService {
     final static String PATH_FMT_BANKZUGANG = "bankzugaenge/%s";
     final static String PATH_FMT_PRODUKT = "bankzugaenge/%s/%s";
     final static String PATH_FMT_KONTOUMSAETZE = "bankzugaenge/%s/%s/kontoumsaetze";
+    final static String PATH_FMT_KONTOUMSAETZE_KATEGORISIERT = "bankzugaenge/%s/%s/kontoumsaetze?categorize=true";
     final static String PATH_FMT_DEPOTPOSITIONEN = "bankzugaenge/%s/%s/depotpositionen";
     final static String PATH_FMT_UEBERWEISUNG = "ueberweisung/%s/%s";
     final static String PATH_FMT_SUBMIT_TAN = "ueberweisung/%s/%s/%s";

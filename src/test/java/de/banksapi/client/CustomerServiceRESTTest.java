@@ -165,6 +165,21 @@ public class CustomerServiceRESTTest implements BanksapiTest {
     }
 
     @Test
+    public void test091GetKontoumsaetzeKategorisiert() {
+        UUID cid = CorrelationIdHolder.genAndSet();
+        if (bankingProduct.hasRelation("get_kontoumsaetze_kategorisiert")) {
+            Response<KontoumsatzKategorisiertList> response = customerService
+                    .getKontoumsaetzeKategorisiert(bankingAccountId,
+                    bankingProduct.getId());
+            basicResponseCheckData(response, 200, "get turnovers categorized", cid);
+            assert response.getData().size() > 0 : "no turnovers listed";
+        } else {
+            fail("no relation available to get categorised turnovers. " +
+                    "Tenant may not be eligible for categorization");
+        }
+    }
+
+    @Test
     public void test100DeleteBankzugaenge() {
         UUID cid = CorrelationIdHolder.genAndSet();
         Response<String> response = customerService.deleteBankzugaenge();

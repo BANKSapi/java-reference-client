@@ -94,6 +94,11 @@ public class CustomerServiceHATEOAS extends CustomerServiceBase {
                 .get(KontoumsatzList.class);
     }
 
+    public Response<KontoumsatzKategorisiertList> getKontoumsaetzeKategorisiert(Bankprodukt bankprodukt) {
+        return createAccessHttpClient(bankprodukt.getUrlForRelation("get_kontoumsaetze_kategorisiert"))
+                .get(KontoumsatzKategorisiertList.class);
+    }
+
     public Response<DepotpositionList> getDepotpositionen(Bankprodukt bankprodukt) {
         return createAccessHttpClient(bankprodukt.getUrlForRelation("get_depotpositionen"))
                 .get(DepotpositionList.class);
