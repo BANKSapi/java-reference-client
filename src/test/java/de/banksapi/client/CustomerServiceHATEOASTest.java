@@ -155,10 +155,10 @@ public class CustomerServiceHATEOASTest implements BanksapiTest {
             assert response.getData().size() > 0 : "no turnovers listed";
         } else if (bankingProduct.hasRelation("get_depotpositionen")) {
             Response<DepotpositionList> response = customerService.getDepotpositionen(bankingProduct);
-            basicResponseCheckData(response, 200, "get securites", cid);
-            assert response.getData().size() > 0 : "no securites listed";
+            basicResponseCheckData(response, 200, "get securities", cid);
+            assert response.getData().size() > 0 : "no securities listed";
         } else {
-            fail("no relation available to get turnovers or securites");
+            fail("no relation available to get turnovers or securities");
         }
     }
 

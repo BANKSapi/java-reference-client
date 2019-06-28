@@ -11,7 +11,7 @@ The client is written in Java 8 and uses Maven as its build system.
 Dependencies to third party libraries have been minimized to ease integration.
 
 The implementation is feature complete for all BANKSapi core features. Newer
-features like background synchronization of banking accounts and REG/Shield
+features like background synchronization of banking accounts and REG/Protect
 (our solution for tenants without a BaFin permission) will be included soon.
 
 The generated Javadoc can be found at
