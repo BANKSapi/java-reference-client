@@ -19,7 +19,7 @@ import static de.banksapi.client.services.internal.HttpHelper.buildUrl;
  * customer information, such as banking accounts, products and turnovers.
  * <p>This service uses the APIs in the common REST way.</p>
  *
- * @see <a href="https://docs.banksapi.de/customer.html">Banks/Connect Customer API</a>
+ * @see <a href="https://docs.banksapi.de/#banks-connect-customer-api4">Banks/Connect Customer API</a>
  */
 public class CustomerServiceREST extends CustomerServiceBase {
 

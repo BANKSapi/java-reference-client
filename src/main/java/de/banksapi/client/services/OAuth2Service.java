@@ -17,7 +17,7 @@ import static de.banksapi.client.services.internal.HttpHelper.buildUrl;
  * This service interfaces with the BANKSapi Auth OAuth2 API. This API is used to retrieve
  * OAuth2 tokens which are needed to authenticate requests to all other BANKSapi APIs.
  *
- * @see <a href="https://docs.banksapi.de/auth.html#oauth2-api-referenz">BANKSapi Auth OAuth2 API</a>
+ * @see <a href="https://docs.banksapi.de/#banksapi-auth-api6">BANKSapi Auth OAuth2 API</a>
  */
 public class OAuth2Service {
 

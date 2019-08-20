@@ -17,7 +17,7 @@ import static de.banksapi.client.services.internal.HttpHelper.buildUrl;
  * This service interfaces with the Banks/Connect Providers API. This API is used to retrieve
  * information about {@link Provider}s.
  *
- * @see <a href="https://docs.banksapi.de/providers.html">Banks/Connect Providers API</a>
+ * @see <a href="https://docs.banksapi.de/#banks-connect-providers-api5">Banks/Connect Providers API</a>
  */
 public class ProvidersService implements OAuthAwareService {
 

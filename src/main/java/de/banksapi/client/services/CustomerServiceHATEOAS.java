@@ -19,7 +19,7 @@ import static de.banksapi.client.services.internal.HttpHelper.buildUrl;
  *
  * <p>This service uses the APIs in the HATEOAS style.</p>
  *
- * @see <a href="https://docs.banksapi.de/customer.html">Banks/Connect Customer API</a>
+ * @see <a href="https://docs.banksapi.de/#banks-connect-customer-api4">Banks/Connect Customer API</a>
  */
 public class CustomerServiceHATEOAS extends CustomerServiceBase {
 

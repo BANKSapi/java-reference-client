@@ -17,7 +17,7 @@ import static de.banksapi.client.services.internal.HttpHelper.buildUrl;
  * This service interfaces with the BANKSapi Auth Management API. This API provides management
  * methods for the authentication API to control clients, users and roles.
  *
- * @see <a href="https://docs.banksapi.de/auth.html#management-api-referenz">
+ * @see <a href="https://docs.banksapi.de/#banksapi-auth-api6">
  * BANKSapi Auth Management API</a>
  */
 public class MgmtService implements OAuthAwareService {
