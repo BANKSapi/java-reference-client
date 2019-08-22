@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -33,7 +34,7 @@ public class Challenge {
 
         private String name;
 
-        private static Map<String, ChallengeType> lookupMap;
+        private static Map<String, ChallengeType> lookupMap = new HashMap<>();
 
         static {
             Arrays.stream(ChallengeType.values()).forEach(ct -> lookupMap.put(ct.getName(), ct));
