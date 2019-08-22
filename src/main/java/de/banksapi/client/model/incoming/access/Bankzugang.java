@@ -16,7 +16,7 @@ import java.util.Collection;
  * transactions.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Bankzugang implements Relations, Messages {
+public class Bankzugang implements Relations, Messages, ScaAdvice {
 
     private BankzugangStatus status;
 
@@ -29,6 +29,7 @@ public class Bankzugang implements Relations, Messages {
     private Collection<TanMedium> tanMedien;
     private Collection<Sicherheitsverfahren> sicherheitsverfahren;
     private Sicherheitsverfahren aktivesSicherheitsverfahren;
+    private Challenge challenge;
 
     private Collection<Bankprodukt> bankprodukte;
 
@@ -49,16 +50,24 @@ public class Bankzugang implements Relations, Messages {
         return timeout;
     }
 
+    @Override
     public Collection<TanMedium> getTanMedien() {
         return tanMedien;
     }
 
+    @Override
     public Collection<Sicherheitsverfahren> getSicherheitsverfahren() {
         return sicherheitsverfahren;
     }
 
+    @Override
     public Sicherheitsverfahren getAktivesSicherheitsverfahren() {
         return aktivesSicherheitsverfahren;
+    }
+
+    @Override
+    public Challenge getChallenge() {
+        return challenge;
     }
 
     public Collection<Bankprodukt> getBankprodukte() {

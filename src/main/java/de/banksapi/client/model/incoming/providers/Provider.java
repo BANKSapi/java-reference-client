@@ -1,11 +1,13 @@
 package de.banksapi.client.model.incoming.providers;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import de.banksapi.client.model.incoming.Kategorie;
 import de.banksapi.client.model.incoming.Relation;
 import de.banksapi.client.model.incoming.Relations;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -24,6 +26,7 @@ public class Provider implements Relations {
     private ProviderAuthenticationInfo authenticationInfo;
     private boolean consumerRelevant;
     private List<ProviderCapability> capabilities;
+    private Set<Set<Kategorie>> channels;
     private List<Relation> relations;
 
     public UUID getId() {
@@ -65,5 +68,9 @@ public class Provider implements Relations {
     @Override
     public Collection<Relation> getRelations() {
         return relations;
+    }
+
+    public Set<Set<Kategorie>> getChannels() {
+        return channels;
     }
 }

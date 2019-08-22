@@ -1,4 +1,4 @@
-package de.banksapi.client.model.incoming.access;
+package de.banksapi.client.model.incoming;
 
 /**
  * A Kategorie (category) classifies a banking product.

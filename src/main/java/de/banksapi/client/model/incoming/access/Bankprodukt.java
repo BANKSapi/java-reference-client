@@ -3,6 +3,7 @@ package de.banksapi.client.model.incoming.access;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.banksapi.client.model.LocalDateTimeDeserializer;
+import de.banksapi.client.model.incoming.Kategorie;
 import de.banksapi.client.model.incoming.Messages;
 import de.banksapi.client.model.incoming.Relation;
 import de.banksapi.client.model.incoming.Relations;

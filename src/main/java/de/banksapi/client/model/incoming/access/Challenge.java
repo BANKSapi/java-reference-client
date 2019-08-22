@@ -33,6 +33,12 @@ public class Challenge {
 
         private String name;
 
+        private static Map<String, ChallengeType> lookupMap;
+
+        static {
+            Arrays.stream(ChallengeType.values()).forEach(ct -> lookupMap.put(ct.getName(), ct));
+        }
+
         ChallengeType(String name) {
             this.name = name;
         }
@@ -43,10 +49,11 @@ public class Challenge {
 
         @JsonCreator
         public static ChallengeType fromString(String string) {
-            return Arrays.stream(ChallengeType.values())
-                    .filter(ct -> string.equals(ct.name))
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("unknown challenge type '" + string + "'"));
+            if (lookupMap.containsKey(string)) {
+                return lookupMap.get(string);
+            } else {
+                throw new IllegalArgumentException("unknown challenge type '" + string + "'");
+            }
         }
 
         @Override
@@ -59,7 +66,8 @@ public class Challenge {
         instructions,
         HHD,
         HHDUC,
-        photo
+        photo,
+        decoupled
     }
 
 }

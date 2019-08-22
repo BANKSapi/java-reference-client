@@ -20,7 +20,11 @@ import static de.banksapi.client.services.internal.HttpHelper.buildUrl;
  * <p>This service uses the APIs in the common REST way.</p>
  *
  * @see <a href="https://docs.banksapi.de/#banks-connect-customer-api4">Banks/Connect Customer API</a>
+ * @deprecated Use the API in the HATEOAS style, cf. {@link CustomerServiceHATEOAS}, the REST
+ * style can't be effectively used when dealing with SCA, where the client possibly has to deal with
+ * a multitude of follow-up actions.
  */
+@Deprecated
 public class CustomerServiceREST extends CustomerServiceBase {
 
     /**

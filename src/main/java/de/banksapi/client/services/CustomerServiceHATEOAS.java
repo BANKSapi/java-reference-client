@@ -2,7 +2,9 @@ package de.banksapi.client.services;
 
 import de.banksapi.client.crypto.CryptoService;
 import de.banksapi.client.model.incoming.access.*;
+import de.banksapi.client.model.incoming.access.sca.Consent;
 import de.banksapi.client.model.incoming.oauth2.OAuth2Token;
+import de.banksapi.client.model.outgoing.access.ConsentCommand;
 import de.banksapi.client.model.outgoing.access.LoginCredentialsMap;
 import de.banksapi.client.model.outgoing.access.Ueberweisung;
 import de.banksapi.client.services.internal.HttpClient.Response;
@@ -65,7 +67,6 @@ public class CustomerServiceHATEOAS extends CustomerServiceBase {
         }
 
         return createAccessHttpClient(customer.getUrlForRelation("add_bankzugaenge"))
-
                 .post(loginCredentialsMapToUse, String.class);
     }
 
@@ -124,6 +125,31 @@ public class CustomerServiceHATEOAS extends CustomerServiceBase {
 
         return createAccessHttpClient(submitTanUrl)
                 .put(submitTanBody, UeberweisungErgebnis.class);
+    }
+
+    public Response<Consent> getConsent(Bankzugang bankzugang) {
+        return createAccessHttpClient(bankzugang.getUrlForRelation("get_consent"))
+                .get(Consent.class);
+    }
+
+    public Response<String> startScaRegProtect(Bankzugang bankzugang) {
+        return createAccessHttpClient(bankzugang.getUrlForRelation("start_sca"))
+                .get(String.class);
+    }
+
+    public Response<String> setScaMethod(Bankzugang bankzugang, ConsentCommand consentCommand) {
+        return createAccessHttpClient(bankzugang.getUrlForRelation("set_sca_method"))
+                .post(consentCommand, String.class);
+    }
+
+    public Response<String> setScaMedium(Bankzugang bankzugang, ConsentCommand consentCommand) {
+        return createAccessHttpClient(bankzugang.getUrlForRelation("set_sca_medium"))
+                .post(consentCommand, String.class);
+    }
+
+    public Response<String> submitAuthentication(Bankzugang bankzugang, ConsentCommand consentCommand) {
+        return createAccessHttpClient(bankzugang.getUrlForRelation("authenticate"))
+                .put(consentCommand, String.class);
     }
 
 }

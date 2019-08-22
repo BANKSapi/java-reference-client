@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UeberweisungErgebnis implements Relations, Messages {
+public class UeberweisungErgebnis implements Relations, Messages, ScaAdvice {
 
     private Collection<Message> messages;
     private Collection<Relation> relations;
@@ -19,6 +19,9 @@ public class UeberweisungErgebnis implements Relations, Messages {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime timeout;
 
+    private Collection<TanMedium> tanMedien;
+    private Collection<Sicherheitsverfahren> sicherheitsverfahren;
+    private Sicherheitsverfahren aktivesSicherheitsverfahren;
     private Challenge challenge;
 
     @Override
@@ -35,6 +38,22 @@ public class UeberweisungErgebnis implements Relations, Messages {
         return timeout;
     }
 
+    @Override
+    public Collection<TanMedium> getTanMedien() {
+        return tanMedien;
+    }
+
+    @Override
+    public Collection<Sicherheitsverfahren> getSicherheitsverfahren() {
+        return sicherheitsverfahren;
+    }
+
+    @Override
+    public Sicherheitsverfahren getAktivesSicherheitsverfahren() {
+        return aktivesSicherheitsverfahren;
+    }
+
+    @Override
     public Challenge getChallenge() {
         return challenge;
     }
