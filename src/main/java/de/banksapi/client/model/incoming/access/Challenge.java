@@ -30,6 +30,7 @@ public class Challenge {
         CHIPTAN_OPTISCH("chipTAN optisch"),
         CHIPTAN_USB("chipTAN-USB"),
         CHIPTAN_QR("chipTAN-QR"),
+        TAN2GO("DKB-TAN2go-App"),
         DEFAULT_TAN("TAN Verfahren");
 
         private String name;
