@@ -16,7 +16,7 @@ public interface OAuthAwareService {
     default HttpClient createAuthenticatingHttpClient(URL bankzugaengeUrl) {
         HttpClient httpClient = new HttpClient(bankzugaengeUrl, LOWER_CAMEL_CASE)
                 .setHeader("Content-type", "application/json")
-                .setHeader("Authorization", "bearer " + getOAuth2Token().getAccessToken());
+                .setHeader("Authorization", "Bearer " + getOAuth2Token().getAccessToken());
 
         UUID uuid = CorrelationIdHolder.get();
         if (uuid != null) {
