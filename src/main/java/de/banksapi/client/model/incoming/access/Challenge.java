@@ -31,6 +31,8 @@ public class Challenge {
         CHIPTAN_USB("chipTAN-USB"),
         CHIPTAN_QR("chipTAN-QR"),
         TAN2GO("DKB-TAN2go-App"),
+        PUSH_TAN("Push-TAN-Verfahren"),
+        DEFAULT_DECOUPLED("Entkoppelte Authentifizierung"),
         DEFAULT_TAN("TAN Verfahren");
 
         private String name;
