@@ -51,11 +51,7 @@ public class Challenge {
 
         @JsonCreator
         public static ChallengeType fromString(String string) {
-            if (lookupMap.containsKey(string)) {
-                return lookupMap.get(string);
-            } else {
-                throw new IllegalArgumentException("unknown challenge type '" + string + "'");
-            }
+            return lookupMap.getOrDefault(string, DEFAULT_TAN);
         }
 
         @Override
