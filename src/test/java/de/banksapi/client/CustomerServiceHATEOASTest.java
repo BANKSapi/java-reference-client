@@ -253,4 +253,11 @@ public class CustomerServiceHATEOASTest implements BanksapiTest {
         basicResponseCheck(deleteResponse, 200, cid);
     }
 
+    @Test
+    public void test170DeleteRegprotectSessions() {
+        UUID cid = CorrelationIdHolder.genAndSet();
+        Response<String> deleteResponse = customerService.deleteRegProtectSessions(customer);
+        basicResponseCheck(deleteResponse, 200, cid);
+    }
+
 }

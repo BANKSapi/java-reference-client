@@ -152,4 +152,8 @@ public class CustomerServiceHATEOAS extends CustomerServiceBase {
                 .put(consentCommand, String.class);
     }
 
+    public Response<String> deleteRegProtectSessions(Customer customer) {
+        return createAccessHttpClient(customer.getUrlForRelation("delete_regprotect_sessions"))
+                .delete();
+    }
 }
