@@ -17,5 +17,6 @@ public enum Kategorie {
     VISA,
     DINERSCLUB,
     SONSTIGEKARTE,
-    DEPOT;
+    DEPOT,
+    KREDITKARTENKONTO;
 }
