@@ -1,6 +1,7 @@
 package de.banksapi.client.services;
 
 import de.banksapi.client.crypto.CryptoService;
+import de.banksapi.client.model.incoming.access.Bankzugang;
 import de.banksapi.client.model.incoming.oauth2.OAuth2Token;
 import de.banksapi.client.model.outgoing.access.LoginCredentials;
 import de.banksapi.client.model.outgoing.access.LoginCredentialsMap;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 
 import static de.banksapi.client.BANKSapi.getBanksapiBase;
 
-class CustomerServiceBase implements OAuthAwareService {
+public abstract class CustomerServiceBase implements OAuthAwareService {
 
     final static URL CUSTOMER_CONTEXT = HttpHelper.buildUrl(getBanksapiBase(), "customer/v2/");
 
@@ -71,5 +72,7 @@ class CustomerServiceBase implements OAuthAwareService {
     HttpClient createAccessHttpClient(URL url) {
         return createAuthenticatingHttpClient(url).setConnectTimeout(30000).setReadTimeout(285000);
     }
+
+    public abstract HttpClient.Response<Bankzugang> getBankzugang(String accountId);
 
 }

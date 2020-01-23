@@ -61,12 +61,18 @@ public class CustomerServiceHATEOAS extends CustomerServiceBase {
     }
 
     public Response<String> addBankzugaenge(Customer customer, LoginCredentialsMap loginCredentialsMap) {
+        return addBankzugaenge(customer, loginCredentialsMap, false);
+    }
+
+    public Response<String> addBankzugaenge(Customer customer, LoginCredentialsMap loginCredentialsMap,
+            boolean refresh) {
         LoginCredentialsMap loginCredentialsMapToUse = loginCredentialsMap;
         if (cryptoService != null) {
             loginCredentialsMapToUse = encryptLoginCredentialsMap(loginCredentialsMap);
         }
 
-        return createAccessHttpClient(customer.getUrlForRelation("add_bankzugaenge"))
+        String refreshQuery = refresh ? "?refresh=true" : "";
+        return createAccessHttpClient(customer.getUrlForRelation("add_bankzugaenge", refreshQuery))
                 .post(loginCredentialsMapToUse, String.class);
     }
 
@@ -137,23 +143,39 @@ public class CustomerServiceHATEOAS extends CustomerServiceBase {
                 .get(String.class);
     }
 
-    public Response<String> setScaMethod(Bankzugang bankzugang, ConsentCommand consentCommand) {
-        return createAccessHttpClient(bankzugang.getUrlForRelation("set_sca_method"))
-                .post(consentCommand, String.class);
+    public Response<Bankzugang> setScaMethod(Bankzugang bankzugang, ConsentCommand consentCommand) {
+        return createAccessHttpClient(bankzugang.getUrlForRelation("set_method"))
+                .post(consentCommand, Bankzugang.class);
     }
 
-    public Response<String> setScaMedium(Bankzugang bankzugang, ConsentCommand consentCommand) {
-        return createAccessHttpClient(bankzugang.getUrlForRelation("set_sca_medium"))
-                .post(consentCommand, String.class);
+    public Response<Bankzugang> setScaMedium(Bankzugang bankzugang, ConsentCommand consentCommand) {
+        return createAccessHttpClient(bankzugang.getUrlForRelation("set_medium"))
+                .post(consentCommand, Bankzugang.class);
     }
 
-    public Response<String> submitAuthentication(Bankzugang bankzugang, ConsentCommand consentCommand) {
+    public Response<Bankzugang> submitAuthentication(Bankzugang bankzugang, ConsentCommand consentCommand) {
         return createAccessHttpClient(bankzugang.getUrlForRelation("authenticate"))
-                .put(consentCommand, String.class);
+                .post(consentCommand, Bankzugang.class);
+    }
+
+    public Response<UeberweisungErgebnis> setScaMethod(UeberweisungErgebnis ueberweisung, ConsentCommand consentCommand) {
+        return createAccessHttpClient(ueberweisung.getUrlForRelation("set_method"))
+                .post(consentCommand, UeberweisungErgebnis.class);
+    }
+
+    public Response<UeberweisungErgebnis> setScaMedium(UeberweisungErgebnis ueberweisung, ConsentCommand consentCommand) {
+        return createAccessHttpClient(ueberweisung.getUrlForRelation("set_medium"))
+                .post(consentCommand, UeberweisungErgebnis.class);
+    }
+
+    public Response<UeberweisungErgebnis> submitAuthentication(UeberweisungErgebnis ueberweisung, ConsentCommand consentCommand) {
+        return createAccessHttpClient(ueberweisung.getUrlForRelation("authenticate"))
+                .post(consentCommand, UeberweisungErgebnis.class);
     }
 
     public Response<String> deleteRegProtectSessions(Customer customer) {
         return createAccessHttpClient(customer.getUrlForRelation("delete_regprotect_sessions"))
                 .delete();
     }
+
 }

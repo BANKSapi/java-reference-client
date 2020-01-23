@@ -24,11 +24,16 @@ public interface Relations {
     }
 
     default URL getUrlForRelation(String name) {
+        return getUrlForRelation(name, "");
+    }
+
+    default URL getUrlForRelation(String name, String suffix) {
         Relation relation = getRelation(name);
+        String url = relation.getHref() + suffix;
         try {
-            return new URL(relation.getHref());
+            return new URL(url);
         } catch (MalformedURLException e) {
-            throw new IllegalStateException("Invalid URL in relation: '" + relation.getHref());
+            throw new IllegalStateException("Invalid URL in relation: '" + url);
         }
     }
 

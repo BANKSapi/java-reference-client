@@ -7,6 +7,7 @@ import de.banksapi.client.services.MgmtService;
 import de.banksapi.client.services.OAuth2Service;
 import de.banksapi.client.services.internal.CorrelationIdHolder;
 import de.banksapi.client.services.internal.HttpClient.Response;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -18,7 +19,7 @@ import static de.banksapi.client.TestAuthData.ADMIN_CLIENT_PASSWORD;
 import static de.banksapi.client.TestAuthData.ADMIN_CLIENT_USERNAME;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MgmtServiceTest implements BanksapiTest {
+public class MgmtServiceTest implements BaseTest {
 
     private static MgmtService mgmtService;
     private static Tenant tenant;
@@ -44,13 +45,19 @@ public class MgmtServiceTest implements BanksapiTest {
         if (clientRole == null && client.getClientRoles().iterator().hasNext()) {
             clientRole = client.getClientRoles().iterator().next();
         }
+
+        CorrelationIdHolder.genAndSet();
+    }
+
+    @After
+    public void tearDown() {
+        CorrelationIdHolder.remove();
     }
 
     @Test
     public void test01GetTenants() {
-        UUID cid = CorrelationIdHolder.genAndSet();
         Response<TenantList> response = mgmtService.getTenants();
-        basicResponseCheckData(response, 200, "get tenants", cid);
+        basicResponseCheckData(response, 200, "get tenants");
         assert response.getData().size() > 0 : "Number of Tenants not greater 0";
 
         tenant = response.getData().get(0);
@@ -58,9 +65,8 @@ public class MgmtServiceTest implements BanksapiTest {
 
     @Test
     public void test02GetTenant() {
-        UUID cid = CorrelationIdHolder.genAndSet();
         Response<Tenant> response = mgmtService.getTenant(tenant.getName());
-        basicResponseCheckData(response, 200, "get tenant", cid);
+        basicResponseCheckData(response, 200, "get tenant");
 
         Tenant myTenant = response.getData();
         assert myTenant.getName().equals(tenant.getName())
@@ -71,17 +77,15 @@ public class MgmtServiceTest implements BanksapiTest {
 
     @Test
     public void test03GetClients() {
-        UUID cid = CorrelationIdHolder.genAndSet();
         Response<ClientList> response = mgmtService.getClients(tenant.getName());
-        basicResponseCheckData(response, 200, "get clients", cid);
+        basicResponseCheckData(response, 200, "get clients");
         assert response.getData().size() > 0 : "Number of clients not greater than 0";
     }
 
     @Test
     public void test04GetClient() {
-        UUID cid = CorrelationIdHolder.genAndSet();
         Response<Client> response = mgmtService.getClient(tenant.getName(), client.getName());
-        basicResponseCheckData(response, 200, "get client", cid);
+        basicResponseCheckData(response, 200, "get client");
 
         Client myClient = response.getData();
 
@@ -111,10 +115,9 @@ public class MgmtServiceTest implements BanksapiTest {
 
     @Test
     public void test05GetClientRoles() {
-        UUID cid = CorrelationIdHolder.genAndSet();
         Response<ClientRoleList> response = mgmtService.getClientRoles(tenant.getName(),
                 client.getName());
-        basicResponseCheckData(response, 200, "get client roles", cid);
+        basicResponseCheckData(response, 200, "get client roles");
 
         ClientRoleList clientRoles = response.getData();
 
@@ -130,17 +133,16 @@ public class MgmtServiceTest implements BanksapiTest {
 
     @Test
     public void test06GetClientRole() {
-        UUID cid = CorrelationIdHolder.genAndSet();
         // check that a random client role can not be retrieved
         Response<ClientRole> responseX = mgmtService.getClientRole(tenant.getName(),
                 client.getName(), generateRandomString());
-        basicResponseCheck(responseX, 404, cid);
+        basicResponseCheck(responseX, 404);
 
         // if the client has at least one client role, check that that role can be retrieved
         if (clientRole != null) {
             Response<ClientRole> response = mgmtService.getClientRole(tenant.getName(),
                     client.getName(), clientRole.getName());
-            basicResponseCheckData(response, 200, "get client role", cid);
+            basicResponseCheckData(response, 200, "get client role");
 
             ClientRole role = response.getData();
 
@@ -151,12 +153,11 @@ public class MgmtServiceTest implements BanksapiTest {
 
     @Test
     public void test07AddUser() {
-        UUID cid = CorrelationIdHolder.genAndSet();
         UserOut user = new UserOut(generateRandomString(), generateRandomString(),
                 generateRandomString(), generateRandomString());
 
         Response<String> response = mgmtService.addUser(tenant.getName(), user);
-        basicResponseCheck(response, 201, cid);
+        basicResponseCheck(response, 201);
 
         addedUser = getUserIdFromLocation(response.getLocation());
         addedUsername = user.getUsername();
@@ -164,59 +165,53 @@ public class MgmtServiceTest implements BanksapiTest {
 
     @Test
     public void test08AddSameUser() {
-        UUID cid = CorrelationIdHolder.genAndSet();
         UserOut user = new UserOut(addedUsername, generateRandomString(),
                 generateRandomString(), generateRandomString());
 
         Response<String> response = mgmtService.addUser(tenant.getName(), user);
-        basicResponseCheck(response, 409, cid);
+        basicResponseCheck(response, 409);
     }
 
     @Test
     public void test09GetUsers() {
-        UUID cid = CorrelationIdHolder.genAndSet();
         Response<UserInList> response = mgmtService.getUsers(tenant.getName());
-        basicResponseCheckData(response, 200, "get users", cid);
+        basicResponseCheckData(response, 200, "get users");
 
         assert response.getData().size() > 0 : "tenant without users";
     }
 
     @Test
     public void test10GetUser() {
-        UUID cid = CorrelationIdHolder.genAndSet();
         Response<UserIn> response404 = mgmtService.getUser(tenant.getName(), UUID.randomUUID());
-        basicResponseCheck(response404, 404, cid);
+        basicResponseCheck(response404, 404);
 
         Response<UserIn> response200 = mgmtService.getUser(tenant.getName(), addedUser);
-        basicResponseCheckData(response200, 200, "get user", cid);
+        basicResponseCheckData(response200, 200, "get user");
     }
 
     @Test
     public void test11GetClientRoleUsers() {
-        UUID cid = CorrelationIdHolder.genAndSet();
         Response<UUIDList> response404 = mgmtService.getClientRoleUsers(tenant.getName(),
                 client.getName(), generateRandomString());
-        basicResponseCheck(response404, 404, cid);
+        basicResponseCheck(response404, 404);
 
         if (clientRole != null) {
             Response<UUIDList> response200 = mgmtService.getClientRoleUsers(tenant.getName(),
                     client.getName(), clientRole.getName());
-            basicResponseCheckData(response200, 200, "get client role users", cid);
+            basicResponseCheckData(response200, 200, "get client role users");
         }
     }
 
     @Test
     public void test12DeactivateUser() {
-        UUID cid = CorrelationIdHolder.genAndSet();
         Response response = mgmtService.deactivateUser(tenant.getName(), addedUser);
-        basicResponseCheck(response, 200, cid);
+        basicResponseCheck(response, 200);
     }
 
     @Test
     public void test13GetDeactivatedUser() {
-        UUID cid = CorrelationIdHolder.genAndSet();
         Response<UserIn> responseSingle = mgmtService.getUser(tenant.getName(), addedUser);
-        basicResponseCheck(responseSingle, 404, cid);
+        basicResponseCheck(responseSingle, 404);
 
         Response<UserInList> responseList = mgmtService.getUsers(tenant.getName());
         assert responseList.getData().stream().noneMatch(userIn -> addedUser.equals(userIn.getId()))
@@ -225,7 +220,6 @@ public class MgmtServiceTest implements BanksapiTest {
 
     @Test
     public void test14ReactivateUser() {
-        UUID cid = CorrelationIdHolder.genAndSet();
         UserOut user400 = new UserOut(generateRandomString(), generateRandomString(),
                 generateRandomString(), generateRandomString());
 
@@ -237,14 +231,13 @@ public class MgmtServiceTest implements BanksapiTest {
                 generateRandomString(), generateRandomString());
 
         Response response200 = mgmtService.reactivateUser(tenant.getName(), addedUser, user200);
-        basicResponseCheck(response200, 200, cid);
+        basicResponseCheck(response200, 200);
     }
 
     @Test
     public void test15DeactivateUser() {
-        UUID cid = CorrelationIdHolder.genAndSet();
         Response response = mgmtService.deactivateUser(tenant.getName(), addedUser);
-        basicResponseCheck(response, 200, cid);
+        basicResponseCheck(response, 200);
     }
 
     private UUID getUserIdFromLocation(String location) {
