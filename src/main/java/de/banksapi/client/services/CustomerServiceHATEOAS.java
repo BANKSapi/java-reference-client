@@ -178,4 +178,9 @@ public class CustomerServiceHATEOAS extends CustomerServiceBase {
                 .delete();
     }
 
+    public Response<Issues> getIssues(String accountId) {
+        URL bankzugaengeUrl = buildUrl(CUSTOMER_CONTEXT, PATH_FMT_ISSUES, accountId);
+        return createAccessHttpClient(bankzugaengeUrl).get(Issues.class);
+    }
+
 }

@@ -119,6 +119,14 @@ public class CustomerServiceHATEOASTest implements CustomerTest {
     }
 
     @Test
+    public void test065GetIssues() {
+        Response<Issues> response = customerService.getIssues(bankingAccountId);
+        basicResponseCheckData(response, 200, "get issues");
+        assertTrue(response.getData().getAktualisierungszeitpunkt() != null,
+                "unable to get time of refresh from issues");
+    }
+
+    @Test
     public void test070BankingAccountHasBankingProducts() {
         assertTrue(!bankingAccount.getBankprodukte().isEmpty(), "banking account does not have " +
                 "banking products");
