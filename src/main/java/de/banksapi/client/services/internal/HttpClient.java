@@ -157,7 +157,11 @@ public class HttpClient {
             T object = null;
             if (responseClass != null && inputStream.available() > 0) {
                 String input = readStream(inputStream);
-                object = objectMapper.readValue(input, responseClass);
+                if (responseClass == String.class) {
+                    object = (T) input;
+                } else {
+                    object = objectMapper.readValue(input, responseClass);
+                }
             } else if (errorStream != null && errorStream.available() > 0) {
                 response.error = readStream(errorStream);
             }
