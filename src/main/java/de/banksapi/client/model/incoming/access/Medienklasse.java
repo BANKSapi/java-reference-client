@@ -9,5 +9,6 @@ public enum Medienklasse {
     MOBIL,
     SECODER,
     PUSHTAN,
-    ALL
+    ALL,
+    PROPRIETARY
 }
