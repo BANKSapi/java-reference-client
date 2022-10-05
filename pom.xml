@@ -19,7 +19,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dependency.jackson.version>2.10.0</dependency.jackson.version>
+        <dependency.jackson.version>2.12.6.1</dependency.jackson.version>
     </properties>
 
     <dependencies>
