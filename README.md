@@ -1,3 +1,9 @@
+# Deprecation info
+
+This reference implementation has been superseded by API clients that
+can be generated using our OpenAPI spec at
+https://docs.banksapi.de/api-documentation/banksapi-v2-openapi-3_0.yaml.
+
 # BANKSapi Reference Client
 
 This is the reference implementation of a BANKSapi client. This client
